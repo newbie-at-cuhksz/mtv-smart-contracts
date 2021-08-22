@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
+
 import "./1_ownable.sol";
 import "./safemath.sol";
+import "./erc721.sol";
 
-contract LguMetaverseBase is Ownable {
+
+contract LguMetaverseBase is Ownable, ERC721 {
     
     using SafeMath for uint256;
     using SafeMath32 for uint32;
@@ -70,7 +73,33 @@ contract LguMetaverseBase is Ownable {
     }
     
     
+    // ERC721 implements
+    mapping (uint => address) modelApprovals;
     
+    function balanceOf(address _owner) override external view returns (uint256) {
+        return ownerLguModelCount[_owner];
+    }
+    
+    function ownerOf(uint256 _tokenId) override external view returns (address) {
+        return LguModelToOwner[_tokenId];
+    }
+    
+    function _transfer(address _from, address _to, uint256 _tokenId) private {
+        ownerLguModelCount[_to] = ownerLguModelCount[_to].add(1);
+        ownerLguModelCount[msg.sender] = ownerLguModelCount[msg.sender].sub(1);
+        LguModelToOwner[_tokenId] = _to;
+        emit Transfer(_from, _to, _tokenId);
+    }
+    
+    function transferFrom(address _from, address _to, uint256 _tokenId) override external payable {
+        require ( LguModelToOwner[_tokenId] == msg.sender || modelApprovals[_tokenId] == msg.sender );
+        _transfer(_from, _to, _tokenId);
+    }
+    
+    function approve(address _approved, uint256 _tokenId) override external payable onlyOwnerOfModel(_tokenId) {
+        modelApprovals[_tokenId] = _approved;
+        emit Approval(msg.sender, _approved, _tokenId);
+    }
 }
 
 
