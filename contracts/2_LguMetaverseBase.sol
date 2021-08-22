@@ -38,4 +38,55 @@ contract LguMetaverseBase is Ownable {
     
     // function _generateRandomDna(string memory _str) private view returns (uint);
     // function createRandomZombie(string memory _name) public;
+    
+    
+    // modified from ZombieFeeding
+    modifier onlyOwnerOfModel(uint _modelId){
+        require(msg.sender == LguModelToOwner[_modelId]);
+        _;
+    }
+    
+    
+    // modified from ZombieHelper
+    function withdraw() external onlyOwner{
+        address payable _owner = payable(address(uint160(owner())));
+        _owner.transfer(address(this).balance);
+    }
+    
+    function changeName(uint _modelId, string calldata _newName) external onlyOwnerOfModel(_modelId) {
+        LguModels[_modelId].name = _newName;
+    }
+    
+    function getModelsByOwner(address _owner) external view returns(uint[] memory) {
+        uint[] memory result = new uint[](ownerLguModelCount[_owner]);
+        uint counter = 0;
+        for (uint i = 0; i < LguModels.length; i++) {
+            if (LguModelToOwner[i] == _owner) {
+                result[counter] = i;
+                counter++;
+            }
+        }
+        return result;
+    }
+    
+    
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
