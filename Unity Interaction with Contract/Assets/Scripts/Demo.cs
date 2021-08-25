@@ -160,13 +160,13 @@ public class Demo : MonoBehaviour
 
 
     string url = "https://rinkeby.infura.io/v3/e9d2d0e0b2e849f6bc21d1b686f402ef";
-    string privateKey = "0x622c91eb3cd1bf7a1efcc13cac20a435639be1dcf8115d1c256965765d13f4c5";
-    string account = "0x3F7811a90330ADf80398D2dC285F93d2A39D97d8";                    // public key OR address of the account
+    //string privateKey = "0x622c91eb3cd1bf7a1efcc13cac20a435639be1dcf8115d1c256965765d13f4c5";
+    //string account = "0x3F7811a90330ADf80398D2dC285F93d2A39D97d8";                    // public key OR address of the account
     string ContractAddress = "0xe9280ef5AEC4C47a2Da87539F444B7dbEfecd4C8";
 
 
     //Sample of new features / requests
-    public IEnumerator Query_getModelsByOwner()
+    public IEnumerator Query_getModelsByOwner(string _account)
     {
         // Query sample
         //var queryRequest = new QueryUnityRequest<BalanceOfFunction, BalanceOfFunctionOutput>(url, account);
@@ -181,12 +181,12 @@ public class Demo : MonoBehaviour
         //Query request using our acccount and the contracts address (no parameters needed and default values)
         Debug.Log("Start: GetModelsByOwnerFunction");
 
-        var queryRequest2 = new QueryUnityRequest<GetModelsByOwnerFunction, GetModelsByOwnerFunctionOutput>(url, account);
-        yield return queryRequest2.Query(new GetModelsByOwnerFunction() { Owner = account }, ContractAddress);
+        var queryRequest2 = new QueryUnityRequest<GetModelsByOwnerFunction, GetModelsByOwnerFunctionOutput>(url, _account);
+        yield return queryRequest2.Query(new GetModelsByOwnerFunction() { Owner = _account }, ContractAddress);
         
         Debug.Log("Finish: GetModelsByOwnerFunction");
 
-        Debug.Log("Report model id owned by this account: " + account);
+        Debug.Log("Report model id owned by this account: " + _account);
         string reportMsg = "ModelIdArray: ";
 
         var dtoResult2 = queryRequest2.Result;
@@ -198,16 +198,16 @@ public class Demo : MonoBehaviour
     }
 
     
-    public IEnumerator Transaction_CreateLguModel()
+    public IEnumerator Transaction_CreateLguModel(string _privateKey, string _name, int _dna)
     {
         // Transfer transaction
         Debug.Log("Start: CreateLguModelFunction");
-        var transactionTransferRequest = new TransactionSignedUnityRequest(url, privateKey);
+        var transactionTransferRequest = new TransactionSignedUnityRequest(url, _privateKey);
 
         var transactionMessage = new CreateLguModelFunction
         {
-            Name = "Create_From_unity_4",
-            Dna = 987987,
+            Name = _name,
+            Dna = _dna,
         };
 
         yield return transactionTransferRequest.SignAndSendTransaction(transactionMessage, ContractAddress);
@@ -226,14 +226,14 @@ public class Demo : MonoBehaviour
     }
 
 
-    public void OnClickGetModelsByOwner()
+    public void OnClickGetModelsByOwner(string _account)
     {
-        StartCoroutine(Query_getModelsByOwner());
+        StartCoroutine(Query_getModelsByOwner(_account));
     }
 
-    public void OnClickCreateLguModel()
+    public void OnClickCreateLguModel(string _privateKey, string _name, int _dna)
     {
-        StartCoroutine(Transaction_CreateLguModel());
+        StartCoroutine(Transaction_CreateLguModel(_privateKey, _name, _dna));
     }
 
 }
