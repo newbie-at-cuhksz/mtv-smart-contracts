@@ -159,6 +159,48 @@ public class Demo : MonoBehaviour
 
 
 
+    /*
+     * contract LguMetaverseBase
+     * function transferFrom(address _from, address _to, uint256 _tokenId) override external payable
+     */
+    [Function("transferFrom")]
+    public class TransferFromFunctionBase : FunctionMessage
+    {
+        [Parameter("address", "_from", 1)]
+        public string From { get; set; }
+        [Parameter("address", "_to", 2)]
+        public string To { get; set; }
+        [Parameter("uint256", "_tokenId", 3)]
+        public BigInteger TokenId { get; set; }
+    }
+    public partial class TransferFromFunction : TransferFromFunctionBase
+    {
+    }
+
+    [Event("Transfer")]
+    public class TransferFromEventDTOBase : IEventDTO
+    {
+        [Parameter("address", "_from", 1, true)]
+        public virtual string From { get; set; }
+        [Parameter("address", "_to", 2, true)]
+        public virtual string To { get; set; }
+
+        [Parameter("uint256", "_tokenId", 3, true)]
+        public virtual BigInteger TokenId { get; set; }
+    }
+    public partial class TransferFromEventDTO : TransferFromEventDTOBase
+    {
+        public static EventABI GetEventABI()
+        {
+            return EventExtensions.GetEventABI<TransferFromEventDTO>();
+        }
+    }
+
+
+
+
+
+
     string url = "https://rinkeby.infura.io/v3/e9d2d0e0b2e849f6bc21d1b686f402ef";
     //string privateKey = "0x622c91eb3cd1bf7a1efcc13cac20a435639be1dcf8115d1c256965765d13f4c5";
     //string account = "0x3F7811a90330ADf80398D2dC285F93d2A39D97d8";                    // public key OR address of the account
@@ -225,6 +267,32 @@ public class Demo : MonoBehaviour
         Debug.Log("Finish: CreateLguModelFunction");
     }
 
+    public IEnumerator Transaction_TransferFrom(string _privateKey, string _from, string _to, BigInteger _tokenId)
+    {
+        // Transfer transaction
+        Debug.Log("Start: TransferFromFunction");
+        var transactionTransferRequest = new TransactionSignedUnityRequest(url, _privateKey);
+
+        var transactionMessage = new TransferFromFunction
+        {
+            From = _from,
+            To = _to,
+            TokenId = _tokenId,
+        };
+
+        yield return transactionTransferRequest.SignAndSendTransaction(transactionMessage, ContractAddress);
+        var transactionTransferHash = transactionTransferRequest.Result;
+
+        var transactionReceiptPolling = new TransactionReceiptPollingRequest(url);
+        yield return transactionReceiptPolling.PollForReceipt(transactionTransferHash, 2);
+        var transferReceipt = transactionReceiptPolling.Result;
+
+        var transferEvent = transferReceipt.DecodeAllEvents<TransferFromEventDTO>();
+        Debug.Log("TransferFromEventDTO from event: " + transferEvent[0].Event.TokenId);
+        
+
+        Debug.Log("Finish: TransferFromFunction");
+    }
 
     public void OnClickGetModelsByOwner(string _account)
     {
@@ -236,4 +304,12 @@ public class Demo : MonoBehaviour
         StartCoroutine(Transaction_CreateLguModel(_privateKey, _name, _dna));
     }
 
+    public void OnClickTransferFrom(int _tokenId)
+    {
+        string privateKey = "0x622c91eb3cd1bf7a1efcc13cac20a435639be1dcf8115d1c256965765d13f4c5";
+        string from = "0x3F7811a90330ADf80398D2dC285F93d2A39D97d8";
+        string to =   "0xd268bc736A187b4E59EdA5e787d0f1a61A97a1fF";
+
+        StartCoroutine(Transaction_TransferFrom(privateKey, from, to, _tokenId));
+    }
 }
