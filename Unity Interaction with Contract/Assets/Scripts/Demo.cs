@@ -164,11 +164,6 @@ public class Demo : MonoBehaviour
     string account = "0x3F7811a90330ADf80398D2dC285F93d2A39D97d8";                    // public key OR address of the account
     string ContractAddress = "0xe9280ef5AEC4C47a2Da87539F444B7dbEfecd4C8";
 
-    void Start()
-    {
-        //StartCoroutine(DeployAndTransferToken());
-    }
-
 
     //Sample of new features / requests
     public IEnumerator Query_getModelsByOwner()
@@ -229,4 +224,16 @@ public class Demo : MonoBehaviour
 
         Debug.Log("Finish: CreateLguModelFunction");
     }
+
+
+    public void OnClickGetModelsByOwner()
+    {
+        StartCoroutine(Query_getModelsByOwner());
+    }
+
+    public void OnClickCreateLguModel()
+    {
+        StartCoroutine(Transaction_CreateLguModel());
+    }
+
 }
