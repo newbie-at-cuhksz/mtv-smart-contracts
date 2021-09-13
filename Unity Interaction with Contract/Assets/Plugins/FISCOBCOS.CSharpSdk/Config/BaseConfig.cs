@@ -9,7 +9,7 @@ namespace FISCOBCOS.CSharpSdk
         /// <summary>
         /// 链上jsonapi 通信地址 通常是ip：8545端口
         /// </summary>       
-        public static string DefaultUrl = "http://49.235.72.8:8545";
+        public static string DefaultUrl = "http://49.235.72.8:8545";     // set by GaryChen
 
         /// <summary>
         /// 默认链Id
