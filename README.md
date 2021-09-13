@@ -51,3 +51,8 @@
 
 * [Infura](https://infura.io/)
 
+* FISCO-BCOS - C# sdk: https://github.com/FISCO-BCOS/csharp-sdk
+
+  * 该SDK基于Nethereum实现
+  * 导入该仓库的`FISCOBCOS.CSharpSdk`文件夹，部分代码需注释掉以消除报错
+
