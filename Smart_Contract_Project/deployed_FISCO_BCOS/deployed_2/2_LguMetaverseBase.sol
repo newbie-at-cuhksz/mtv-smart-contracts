@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity>=0.4.24 <0.6.11;
 
 
 import "./1_ownable.sol";
@@ -52,11 +52,12 @@ contract LguMetaverseBase is Ownable, ERC721 {
     
     // modified from ZombieHelper
     function withdraw() external onlyOwner{
-        address payable _owner = payable(address(uint160(owner())));
+        //address payable _owner = payable(address(uint160(owner())));
+        address _owner = owner();
         _owner.transfer(address(this).balance);
     }
     
-    function changeName(uint _modelId, string calldata _newName) external onlyOwnerOfModel(_modelId) {
+    function changeName(uint _modelId, string _newName) external onlyOwnerOfModel(_modelId) {
         LguModels[_modelId].name = _newName;
     }
     
@@ -76,11 +77,11 @@ contract LguMetaverseBase is Ownable, ERC721 {
     // ERC721 implements
     mapping (uint => address) modelApprovals;
     
-    function balanceOf(address _owner) override external view returns (uint256) {
+    function balanceOf(address _owner) external view returns (uint256) {
         return ownerLguModelCount[_owner];
     }
     
-    function ownerOf(uint256 _tokenId) override external view returns (address) {
+    function ownerOf(uint256 _tokenId) external view returns (address) {
         return LguModelToOwner[_tokenId];
     }
     
@@ -91,12 +92,12 @@ contract LguMetaverseBase is Ownable, ERC721 {
         emit Transfer(_from, _to, _tokenId);
     }
     
-    function transferFrom(address _from, address _to, uint256 _tokenId) override external payable {
+    function transferFrom(address _from, address _to, uint256 _tokenId) external payable {
         require ( LguModelToOwner[_tokenId] == msg.sender || modelApprovals[_tokenId] == msg.sender );
         _transfer(_from, _to, _tokenId);
     }
     
-    function approve(address _approved, uint256 _tokenId) override external payable onlyOwnerOfModel(_tokenId) {
+    function approve(address _approved, uint256 _tokenId) external payable onlyOwnerOfModel(_tokenId) {
         modelApprovals[_tokenId] = _approved;
         emit Approval(msg.sender, _approved, _tokenId);
     }

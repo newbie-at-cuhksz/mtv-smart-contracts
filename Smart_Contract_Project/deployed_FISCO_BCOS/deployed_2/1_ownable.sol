@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity>=0.4.24 <0.6.11;
 
 /**
 * @title Ownable
@@ -18,7 +18,7 @@ contract Ownable {
   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
   * account.
   */
-  constructor() {
+  constructor() internal {
     _owner = msg.sender;
     emit OwnershipTransferred(address(0), _owner);
   }
