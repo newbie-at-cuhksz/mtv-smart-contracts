@@ -18,18 +18,12 @@
     //SPDX-License-Identifier: MIT
     pragma solidity >=0.7.0 <0.9.0;
     // 实际编译使用v0.8.4
+    
+    // FISCO链
+    // SPDX-License-Identifier: MIT
+    pragma solidity>=0.4.24 <0.6.11;
+    // 实际编译使用v0.4.25
     ```
-
-### 已部署
-
-1. **Deployed 1:** 
-
-   * Rinkeby Testnet
-   * **Contract Address**: 0xe9280ef5AEC4C47a2Da87539F444B7dbEfecd4C8
-
-   * https://rinkeby.etherscan.io/address/0xe9280ef5AEC4C47a2Da87539F444B7dbEfecd4C8
-
-   * **Owner of this contract**: 0x3F7811a90330ADf80398D2dC285F93d2A39D97d8
 
 
 
@@ -54,5 +48,5 @@
 * FISCO-BCOS - C# sdk: https://github.com/FISCO-BCOS/csharp-sdk
 
   * 该SDK基于Nethereum实现
-  * 导入该仓库的`FISCOBCOS.CSharpSdk`文件夹，部分代码需注释掉以消除报错
+  * 导入该仓库的`FISCOBCOS.CSharpSdk`文件夹，部分代码需注释掉以消除报错（参考[这个仓库](https://github.com/Chen-Gary/csharp-sdk)的修改）
 
