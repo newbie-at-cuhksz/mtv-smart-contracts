@@ -51,10 +51,10 @@ contract Ownable {
   * It will not be possible to call the functions with the `onlyOwner`
   * modifier anymore.
   */
-  function renounceOwnership() public onlyOwner {
-    emit OwnershipTransferred(_owner, address(0));
-    _owner = address(0);
-  }
+//   function renounceOwnership() public onlyOwner {
+//     emit OwnershipTransferred(_owner, address(0));
+//     _owner = address(0);
+//   }
 
   /**
   * @dev Allows the current owner to transfer control of the contract to a newOwner.

@@ -13,15 +13,12 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     using SafeMath32 for uint32;
     using SafeMath16 for uint16;
     
-    event NewLguModel(uint LguModelId, string name, uint dna);
+    event NewLguModel(uint LguModelId, string name, string content);
     
-    //uint dnaDigits = 16;
-    //uint dnaModulus = 10 ** dnaDigits;
-    //uint cooldownTime = 1 days;
-    
+
     struct LguModel {
         string name;
-        uint dna;
+        string content;
     }
     
     LguModel[] public LguModels;
@@ -30,32 +27,27 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     mapping (address => uint) ownerLguModelCount;
     
     
-    // This function should be "internal"
-    function CreateLguModel(string memory _name, uint _dna) public {
-        LguModels.push( LguModel(_name, _dna) );
+    function CreateLguModel(string memory _name, string memory _content) public onlyOwner {
+        LguModels.push( LguModel(_name, _content) );
         uint id = LguModels.length - 1;
         LguModelToOwner[id] = msg.sender;
         ownerLguModelCount[msg.sender] = ownerLguModelCount[msg.sender].add(1);
-        emit NewLguModel(id, _name, _dna);
+        emit NewLguModel(id, _name, _content);
     }
     
-    // function _generateRandomDna(string memory _str) private view returns (uint);
-    // function createRandomZombie(string memory _name) public;
     
-    
-    // modified from ZombieFeeding
+
     modifier onlyOwnerOfModel(uint _modelId){
         require(msg.sender == LguModelToOwner[_modelId]);
         _;
     }
     
     
-    // modified from ZombieHelper
-    function withdraw() external onlyOwner{
-        //address payable _owner = payable(address(uint160(owner())));
-        address _owner = owner();
-        _owner.transfer(address(this).balance);
-    }
+    // function withdraw() external onlyOwner {
+    //     //address payable _owner = payable(address(uint160(owner())));
+    //     address _owner = owner();
+    //     _owner.transfer(address(this).balance);
+    // }
     
     function changeName(uint _modelId, string _newName) external onlyOwnerOfModel(_modelId) {
         LguModels[_modelId].name = _newName;
@@ -102,21 +94,4 @@ contract LguMetaverseEditor is Ownable, ERC721 {
         emit Approval(msg.sender, _approved, _tokenId);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

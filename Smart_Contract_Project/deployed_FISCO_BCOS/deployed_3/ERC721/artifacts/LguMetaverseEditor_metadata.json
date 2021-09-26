@@ -24,6 +24,24 @@
 				"type": "function"
 			},
 			{
+				"constant": false,
+				"inputs": [
+					{
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"name": "_content",
+						"type": "string"
+					}
+				],
+				"name": "CreateLguModel",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"constant": true,
 				"inputs": [
 					{
@@ -65,15 +83,6 @@
 				"type": "function"
 			},
 			{
-				"constant": false,
-				"inputs": [],
-				"name": "withdraw",
-				"outputs": [],
-				"payable": false,
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"constant": true,
 				"inputs": [
 					{
@@ -88,8 +97,8 @@
 						"type": "string"
 					},
 					{
-						"name": "dna",
-						"type": "uint256"
+						"name": "content",
+						"type": "string"
 					}
 				],
 				"payable": false,
@@ -132,33 +141,6 @@
 				],
 				"payable": false,
 				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"constant": false,
-				"inputs": [],
-				"name": "renounceOwnership",
-				"outputs": [],
-				"payable": false,
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"constant": false,
-				"inputs": [
-					{
-						"name": "_name",
-						"type": "string"
-					},
-					{
-						"name": "_dna",
-						"type": "uint256"
-					}
-				],
-				"name": "CreateLguModel",
-				"outputs": [],
-				"payable": false,
-				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -255,8 +237,8 @@
 					},
 					{
 						"indexed": false,
-						"name": "dna",
-						"type": "uint256"
+						"name": "content",
+						"type": "string"
 					}
 				],
 				"name": "NewLguModel",
@@ -332,9 +314,6 @@
 				"owner()": {
 					"return": "the address of the owner.\r"
 				},
-				"renounceOwnership()": {
-					"details": "Allows the current owner to relinquish control of the contract.\r"
-				},
 				"transferOwnership(address)": {
 					"details": "Allows the current owner to transfer control of the contract to a newOwner.\r",
 					"params": {
@@ -344,11 +323,7 @@
 			}
 		},
 		"userdoc": {
-			"methods": {
-				"renounceOwnership()": {
-					"notice": "Renouncing to ownership will leave the contract without an owner.\r It will not be possible to call the functions with the `onlyOwner`\r modifier anymore.\r"
-				}
-			}
+			"methods": {}
 		}
 	},
 	"settings": {
@@ -365,9 +340,9 @@
 	},
 	"sources": {
 		"LguMetaverseEditor.sol": {
-			"keccak256": "0xc81694a2ed5f8295eb006368170d89f693e10f681e9db717840389b5b12aa3dc",
+			"keccak256": "0x5a02d2fb2f78308234df2c856f01dcd817c9b938b503e2f0f2113f59132ad4cf",
 			"urls": [
-				"bzzr://836390a02a2c3d867040b371d5f6aeb4537e65731ce13227b6f1d8ff665b4982"
+				"bzzr://7315443e419f765e8a3fd28effd4e41f02bedf1bf3d3be4c9acaa3be513a4ad2"
 			]
 		},
 		"erc721.sol": {
@@ -377,9 +352,9 @@
 			]
 		},
 		"ownable.sol": {
-			"keccak256": "0xb950232c314208f30b053909c0fa5dca344ed5d5ba34d6b8858e15ea459baad9",
+			"keccak256": "0x58496cf62e57b62a3d3c50537ef66e5b7c3e915fb823484cc1ba68d3f1e89f03",
 			"urls": [
-				"bzzr://6f764e17745e15f9511200b44f087f32539aaaaf1b694f3e534dfd35f2b15f5c"
+				"bzzr://9a25717c0b129e7b2db824957746aef1993859127e10bf893d009ee1e3080d77"
 			]
 		},
 		"safemath.sol": {
