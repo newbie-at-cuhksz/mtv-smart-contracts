@@ -7,7 +7,7 @@ import "./safemath.sol";
 import "./erc721.sol";
 
 
-contract LguMetaverseBase is Ownable, ERC721 {
+contract LguMetaverseEditor is Ownable, ERC721 {
     
     using SafeMath for uint256;
     using SafeMath32 for uint32;
