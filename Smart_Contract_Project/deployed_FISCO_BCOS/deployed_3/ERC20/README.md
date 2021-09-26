@@ -1,9 +1,9 @@
-# LguMetaverseBase.sol
+# LguToken.sol
 
 ## 1. Info
 
-* Contract Address: 0xXXXXXXXXXXX
-* Owner: 0xXXXXXXXXXXX
+* Contract Address: 0xe9adb14fd53354a5a774705bc9c1ee25c2257933
+* Owner: 0xa8eea568452bd79502839fde0675347b47a54913
 
 ## 2. Process
 
