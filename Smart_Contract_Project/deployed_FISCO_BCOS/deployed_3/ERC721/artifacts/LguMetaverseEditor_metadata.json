@@ -346,9 +346,9 @@
 			]
 		},
 		"erc721.sol": {
-			"keccak256": "0x2758ce7bffdda2e82881f431344201f051bd0c324fb85700b046995b38e8b78f",
+			"keccak256": "0xd62438f89890472c4df8dba876da43bac9661508d6ec9528eaf515933b12bfc3",
 			"urls": [
-				"bzzr://a3d8e802522d6507f8d7e41d04264077c4032bf86f39f5f623660a6ad86a661f"
+				"bzzr://d074aa344c1de8871cf5e0facf2148c702c76cb4c6298bfd22bb943ca2a66112"
 			]
 		},
 		"ownable.sol": {
