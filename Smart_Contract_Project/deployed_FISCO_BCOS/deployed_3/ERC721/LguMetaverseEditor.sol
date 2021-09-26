@@ -14,15 +14,15 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     using SafeMath32 for uint32;
     using SafeMath16 for uint16;
     
-    // Token name (set in constructor)
-    string private _tokenName;
-    // Token symbol (set in constructor)
-    string private _tokenSymbol;
+    // Token name
+    string private _tokenName = "LGU Model NFT";
+    // Token symbol
+    string private _tokenSymbol = "LGU-NFT";
     
-    constructor() internal {
-        _tokenName = "LGU Model NFT";
-        _tokenSymbol = "LGU-NFT";
-    }
+    // constructor() internal {
+    //      _tokenName = "LGU Model NFT";
+    //      _tokenSymbol = "LGU-NFT";
+    // }
     
     // ERC721Metadata-name
     function tokenName() public view returns (string memory) {

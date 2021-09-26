@@ -6,14 +6,33 @@
 	"output": {
 		"abi": [
 			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "getApproved",
+				"outputs": [
+					{
+						"name": "",
+						"type": "address"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"constant": false,
 				"inputs": [
 					{
-						"name": "_approved",
+						"name": "to",
 						"type": "address"
 					},
 					{
-						"name": "_tokenId",
+						"name": "tokenId",
 						"type": "uint256"
 					}
 				],
@@ -126,6 +145,20 @@
 			},
 			{
 				"constant": true,
+				"inputs": [],
+				"name": "tokenName",
+				"outputs": [
+					{
+						"name": "",
+						"type": "string"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
 				"inputs": [
 					{
 						"name": "_owner",
@@ -137,6 +170,20 @@
 					{
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [],
+				"name": "tokenSymbol",
+				"outputs": [
+					{
+						"name": "",
+						"type": "string"
 					}
 				],
 				"payable": false,
@@ -175,6 +222,24 @@
 				"constant": false,
 				"inputs": [
 					{
+						"name": "operator",
+						"type": "address"
+					},
+					{
+						"name": "approved",
+						"type": "bool"
+					}
+				],
+				"name": "setApprovalForAll",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
 						"name": "_modelId",
 						"type": "uint256"
 					},
@@ -187,6 +252,29 @@
 				"outputs": [],
 				"payable": false,
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"constant": true,
+				"inputs": [
+					{
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"name": "operator",
+						"type": "address"
+					}
+				],
+				"name": "isApprovedForAll",
+				"outputs": [
+					{
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"payable": false,
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -293,6 +381,28 @@
 				"inputs": [
 					{
 						"indexed": true,
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"name": "_operator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"name": "_approved",
+						"type": "bool"
+					}
+				],
+				"name": "ApprovalForAll",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
 						"name": "previousOwner",
 						"type": "address"
 					},
@@ -340,15 +450,15 @@
 	},
 	"sources": {
 		"LguMetaverseEditor.sol": {
-			"keccak256": "0x5a02d2fb2f78308234df2c856f01dcd817c9b938b503e2f0f2113f59132ad4cf",
+			"keccak256": "0xb80ca00a6d9b6163e86b79369c1c7c95e4f4160eb78b280b802bad15faa18835",
 			"urls": [
-				"bzzr://7315443e419f765e8a3fd28effd4e41f02bedf1bf3d3be4c9acaa3be513a4ad2"
+				"bzzr://5de2ade4addffdd8c5cfa07a6ff72669bde0ef0a01c0a519799c3ec30a2e9f74"
 			]
 		},
 		"erc721.sol": {
-			"keccak256": "0xd62438f89890472c4df8dba876da43bac9661508d6ec9528eaf515933b12bfc3",
+			"keccak256": "0x0cc0401a8feab67d208e26fa3133d3c2e0f29ec881c42e626384ba980e0be17d",
 			"urls": [
-				"bzzr://d074aa344c1de8871cf5e0facf2148c702c76cb4c6298bfd22bb943ca2a66112"
+				"bzzr://7bfacdbff35752bd1f8b592bff1a500dc988f2fd09b0b63efe22c0a29901f33e"
 			]
 		},
 		"ownable.sol": {
