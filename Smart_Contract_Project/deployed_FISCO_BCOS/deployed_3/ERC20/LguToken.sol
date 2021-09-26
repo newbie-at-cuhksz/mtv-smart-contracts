@@ -141,7 +141,7 @@ contract LguToken is ERC20, TokenValueMapping {
     LguMetaverseEditorInterface lguMetaverseEditorInterface;
     uint256 private _createNftFee = 10;
 
-    function GetCreateNftFee() view external {
+    function GetCreateNftFee() view external returns (uint256) {
         return _createNftFee;
     }
     
