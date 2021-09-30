@@ -4,6 +4,13 @@
 
 ## 1. Smart Contracts
 
+包含两部分：
+
+* ERC20 - 游戏内代币
+* ERC721 - 编辑器NFT
+
+开发环境：
+
 * Remix IDE: https://remix.ethereum.org/
 
 * [Remixd](https://remix-ide.readthedocs.io/en/latest/remixd.html) command (Remix IDE 连接本地文件夹):
@@ -27,7 +34,21 @@
 
 
 
-## 2. Unity Interaction with Contract
+## 2. Smart Contracts Interaction
+
+### 2.1 Smart Contracts Interaction from Server
+
+客户端 ==> 服务器 ==> 合约
+
+需实现服务器与合约交互的接口
+
+文档：https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/python_sdk/index.html
+
+* Python
+
+### 2.2 Unity Interaction with Contract (弃用)
+
+客户端直接与合约交互
 
 * Unity 2019.4.5f1
 
