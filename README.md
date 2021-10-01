@@ -38,12 +38,12 @@
 
 ### 2.1 Smart Contracts Interaction from Server
 
-客户端 ==> 服务器 ==> 合约
+客户端 ==> **服务器 ==> 合约**
 
 需实现服务器与合约交互的接口
 
-文档：https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/python_sdk/index.html
-
+* [官方文档](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/python_sdk/index.html)
+* 服务器环境配置见[Server_Contract_Interaction_py/README.md](Server_Contract_Interaction_py/README.md)
 * Python
 
 ### 2.2 Unity Interaction with Contract (弃用)
