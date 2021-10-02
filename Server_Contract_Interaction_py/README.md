@@ -33,13 +33,21 @@ sudo apt install -y zlib1g-dev libffi7 libffi-dev wget git
 
 ## 2. 获取FISCO链 python-sdk源码
 
-找一个合适的目录，执行:
+我们**不**使用以下官方提供的clone命令
 
-```bash
-git clone https://gitee.com/FISCO-BCOS/python-sdk
-    
-# 如果服务器访问GitHub速度快的话，也可以使用
-git clone https://github.com/FISCO-BCOS/python-sdk
+> 找一个合适的目录，执行:
+> 
+> ```bash
+> git clone https://gitee.com/FISCO-BCOS/python-sdk
+>     
+> # 如果服务器访问GitHub速度快的话，也可以使用
+> git clone https://github.com/FISCO-BCOS/python-sdk
+> ```
+
+我们从[这个仓库](https://github.com/Chen-Gary/FISCO-BCOS-python-sdk)克隆魔改后的python-sdk。你可以选择直接在服务器执行clone命令；如果直接clone太慢，也可以先克隆到本地再上传到服务器
+
+```
+git clone https://github.com/Chen-Gary/FISCO-BCOS-python-sdk.git
 ```
 
 
@@ -92,9 +100,13 @@ pip3.7 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 > 注意执行pip命令时指定相应的版本（如果使用`pip`或`pip3`可能会安装依赖到原先的python2/python3.8等不符合要求的版本）
 
+这一步很重要，一定要确保所有库都装上了。如果之后运行代码报错“python找不到某个module”，先检查那个module是不是在`requirements.txt`里，若是，则再运行一遍`pip3.7 install -r requirements.txt`
+
 
 
 ## 5. 初始化配置
+
+**（如果你clone了[魔改版的sdk](https://github.com/Chen-Gary/FISCO-BCOS-python-sdk)，请直接跳过这一步，我已经提前配置好了）**
 
 官方文档在这一步使用`bash init_env.sh -i`做了以下两件事：
 
@@ -108,6 +120,8 @@ pip3.7 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 
 ## 6. 配置client_config.py
+
+**（如果你clone了[魔改版的sdk](https://github.com/Chen-Gary/FISCO-BCOS-python-sdk)，请直接跳过这一步，我已经提前配置好了）**
 
 官方文档的配置针对使用“Channel通信协议”，而我们使用更简单的rpc通信
 
@@ -133,15 +147,32 @@ pip3.7 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 ## 7. 测试
 
-在python-sdk目录下，执行
+* 在python-sdk目录下，执行
 
-```
-python3.7 console.py getNodeVersion  #获取区块链节点版本信息
-python3.7 console.py getBlockNumber  #获取最新块高
+    ```
+    python3.7 console.py getNodeVersion  #获取区块链节点版本信息
+    python3.7 console.py getBlockNumber  #获取最新块高
+    
+    # 以下是官方提供的命令，没有指定python版本，可能没法运行
+    ./console.py getNodeVersion
+    ```
 
-# 以下是官方提供的命令，没有指定python版本，可能没法运行
-./console.py getNodeVersion
-```
+    如果可以正常显示信息，则环境配置完成
 
-如果可以正常显示信息，则环境配置完成
+* 在python-sdk目录下，阅读并执行
+
+  ```
+  python3.7 demo_mtv_transaction.py
+  ```
+
+  代码结构如下，以后区块链方面的接口会类似`demo_mtv_transaction.py`中两个标注“接口”的函数。
+
+  这段代码与提前部署好的HelloWorld合约交互，这个合约在区块链上维护了一个字符串
+  
+  * `HelloWorld_get()`：读取那个字符串
+  * `HelloWorld_set()`：更改那个字符串
+  
+  修改Line 75的第二个参数，即可把区块链上的字符串修改为设定的值
+  
+  ![](README_img/demo_mtv_transaction_code.png)
 
