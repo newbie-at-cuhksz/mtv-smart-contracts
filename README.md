@@ -17,6 +17,8 @@
 
     ```
     remixd -s <absolute-path-to-the-shared-folder> --remix-ide https://remix.ethereum.org
+    
+    remixd -s <absolute-path-to-the-shared-folder> --remix-ide http://remix.ethereum.org
     ```
 
 * Compiler
