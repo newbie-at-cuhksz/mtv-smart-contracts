@@ -12,22 +12,31 @@ contract LguMetaverseEditorInterface {
 
 contract LguToken is TokenValueMapping {
     
-    function grantToken(address account, uint256 amount) external onlyOwner {
+    // Remove in latter version
+    function grantTokenDirectly1(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
     
-    function grantTokenOnHook(address account, uint256 timeSpan, uint256 valuePerTimeUnit) external onlyOwner {
+    // Remove in latter version
+    function grantTokenDirectly2(address account, uint256 timeSpan, uint256 valuePerTimeUnit) external onlyOwner {
         uint256 amount = timeSpan.mul(valuePerTimeUnit);
         _mint(account, amount);
     }
     
+    // need to be adjusted!!
     function grantTokenOnHookOnBlockchain(address account, uint256 timeSpan, string location) external isKeyValid(location) onlyOwner {
         uint256 amount = timeSpan.mul( _tokenValueMapping[location] );
         _mint(account, amount);
     }
     
+    // Remove in latter version
+    function spendTokenDirectly(uint256 amount) external {
+        _burn(msg.sender, amount);
+    }
+    
     
     // interaction with LguMetaverseEditor
+    // need to be adjusted!!
     LguMetaverseEditorInterface lguMetaverseEditorInterface;
     uint256 private _createNftFee = 10;
 
@@ -44,8 +53,6 @@ contract LguToken is TokenValueMapping {
     }
     
     function CreateNft(string _nftName, string _nftContent) external {
-        require(_createNftFee <= _balances[msg.sender]);
-        
         _burn(msg.sender, _createNftFee);
         
         lguMetaverseEditorInterface.CreateLguModel(_nftName, _nftContent);
