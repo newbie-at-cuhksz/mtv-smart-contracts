@@ -9,9 +9,9 @@ pragma solidity>=0.4.24 <0.6.11;
  * https://docs.openzeppelin.com/contracts/2.x/api/token/erc20
  */
  
-//import "./ownable.sol";  // already set in TokenValueMapping
-import "./safemath.sol";
-import "./erc20.sol";
+//import "./Ownable.sol";  // already set in TokenValueMapping
+import "./Safemath.sol";
+import "./IERC20.sol";
 import "./TokenValueMapping.sol";
 
 
@@ -20,19 +20,8 @@ contract LguMetaverseEditorInterface {
 }
 
 
-contract LguToken is ERC20, TokenValueMapping {
+contract LguToken is IERC20, TokenValueMapping {
     using SafeMath for uint256;
-    
-    string private _name = "LGU Token";
-    string private _symbol = "LGU-T";
-    
-    function name() external view returns (string) {
-        return _name;
-    }
-    
-    function symbol() external view returns (string) {
-        return _symbol;
-    }
     
     mapping (address => uint256) private _balances;
 
@@ -48,7 +37,14 @@ contract LguToken is ERC20, TokenValueMapping {
         return _balances[owner];
     }
     
-    function allowance(address owner, address spender) public view returns (uint256) {
+    function allowance(
+        address owner,
+        address spender
+    )
+        public
+        view
+        returns (uint256)
+    {
         return _allowed[owner][spender];
     }
     
@@ -64,12 +60,20 @@ contract LguToken is ERC20, TokenValueMapping {
     
     function approve(address spender, uint256 value) public returns (bool) {
         require(spender != address(0));
+
         _allowed[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }
     
-    function transferFrom(address from, address to, uint256 value) public returns (bool) {
+    function transferFrom(
+        address from, 
+        address to, 
+        uint256 value
+    ) 
+        public 
+        returns (bool) 
+    {
         require(value <= _balances[from]);
         require(value <= _allowed[from][msg.sender]);
         require(to != address(0));
@@ -81,18 +85,32 @@ contract LguToken is ERC20, TokenValueMapping {
         return true;
     }
     
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
+    function increaseAllowance(
+        address spender, 
+        uint256 addedValue
+    ) 
+    public 
+    returns (bool) 
+    {
         require(spender != address(0));
         
-        _allowed[msg.sender][spender] = (_allowed[msg.sender][spender].add(addedValue));
+        _allowed[msg.sender][spender] = (
+            _allowed[msg.sender][spender].add(addedValue));
         emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);
         return true;
     }
     
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    function decreaseAllowance(
+        address spender, 
+        uint256 subtractedValue
+    ) 
+    public 
+    returns (bool) 
+    {
         require(spender != address(0));
         
-        _allowed[msg.sender][spender] = (_allowed[msg.sender][spender].sub(subtractedValue));
+        _allowed[msg.sender][spender] = (
+            _allowed[msg.sender][spender].sub(subtractedValue));
         emit Approval(msg.sender, spender, _allowed[msg.sender][spender]);
         return true;
     }
@@ -116,7 +134,8 @@ contract LguToken is ERC20, TokenValueMapping {
     function _burnFrom(address account, uint256 amount) internal {
         require(amount <= _allowed[account][msg.sender]);
         
-        _allowed[account][msg.sender] = _allowed[account][msg.sender].sub(amount);
+        _allowed[account][msg.sender] = _allowed[account][msg.sender].sub(
+            amount);
         _burn(account, amount);
     }
     
