@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity>=0.4.24 <0.6.11;
 
-import "./ownable.sol";
+import "./LguTokenERC20Base.sol";
 
-contract TokenValueMapping is Ownable {
+contract TokenValueMapping is LguTokenERC20Base {
     mapping (string => uint256) internal _tokenValueMapping;
     string[] private LocationSet;
     
