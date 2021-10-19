@@ -20,7 +20,7 @@ contract LguMetaverseEditorInterface {
 }
 
 
-contract LguToken is IERC20, TokenValueMapping {
+contract LguTokenERC20Base is IERC20, TokenValueMapping {
     using SafeMath for uint256;
     
     mapping (address => uint256) private _balances;
