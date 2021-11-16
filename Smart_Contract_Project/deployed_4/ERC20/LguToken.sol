@@ -23,11 +23,8 @@ contract LguToken is TokenValueMapping {
         _mint(account, amount);
     }
     
-    // need to be adjusted!!
-    function grantTokenOnHookOnBlockchain(address account, uint256 timeSpan, string location) external isKeyValid(location) onlyOwner {
-        uint256 amount = timeSpan.mul( _tokenValueMapping[location] );
-        _mint(account, amount);
-    }
+    // in "TokenValueMapping",
+    // function grantTokenOnHookOnBlockchain(address account, uint256 timeSpan, string location) external isRegionNameValid(location) onlyOwner;
     
     // Remove in latter version
     function spendTokenDirectly(uint256 amount) external {
