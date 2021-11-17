@@ -6,7 +6,7 @@ import "./TokenValueMapping.sol";
 
 
 contract LguMetaverseEditorInterface {
-    function CreateLguModel(string memory _name, string memory _content) public;
+    function CreateLguModel(address _creator, string memory _name, string memory _content) public;
 }
 
 
@@ -33,7 +33,6 @@ contract LguToken is TokenValueMapping {
     
     
     // interaction with LguMetaverseEditor
-    // need to be adjusted!!
     LguMetaverseEditorInterface lguMetaverseEditorInterface;
     uint256 private _createNftFee = 10;
 
@@ -41,18 +40,18 @@ contract LguToken is TokenValueMapping {
         return _createNftFee;
     }
     
-    function SetNftAddr(address newAddr) external onlyOwner {
-        lguMetaverseEditorInterface = LguMetaverseEditorInterface(newAddr);
-    }
-    
     function SetCreateNftFee(uint256 newFee) external onlyOwner {
         _createNftFee = newFee;
+    }
+    
+    function SetNftAddr(address newAddr) external onlyOwner {
+        lguMetaverseEditorInterface = LguMetaverseEditorInterface(newAddr);
     }
     
     function CreateNft(string _nftName, string _nftContent) external {
         _burn(msg.sender, _createNftFee);
         
-        lguMetaverseEditorInterface.CreateLguModel(_nftName, _nftContent);
+        lguMetaverseEditorInterface.CreateLguModel(msg.sender, _nftName, _nftContent);
     }
 
 }

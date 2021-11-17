@@ -28,6 +28,34 @@ contract TokenValueMapping is LguTokenERC20Base {
         _regions.push( RegionInfo("TA", 15, initialWeight) );
         _regions.push( RegionInfo("Shaw", 10, initialWeight) );
         _regions.push( RegionInfo("Gym", 20, initialWeight) );
+
+        /*
+        _regions.push( RegionInfo("NOWHERE",                    20, initialWeight) );
+        _regions.push( RegionInfo("Administration Building",    20, initialWeight) );
+        _regions.push( RegionInfo("University Library",         20, initialWeight) );
+        _regions.push( RegionInfo("Student Center",             20, initialWeight) );
+        _regions.push( RegionInfo("TA",                         20, initialWeight) );
+        _regions.push( RegionInfo("Million Avenue",             20, initialWeight) );
+        _regions.push( RegionInfo("TB",                         20, initialWeight) );
+        _regions.push( RegionInfo("TC",                         20, initialWeight) );
+        _regions.push( RegionInfo("TD",                         20, initialWeight) );
+        _regions.push( RegionInfo("RA",                         20, initialWeight) );
+        _regions.push( RegionInfo("RB",                         20, initialWeight) );
+        _regions.push( RegionInfo("Shaw College East",          20, initialWeight) );
+        _regions.push( RegionInfo("Shaw College West",          20, initialWeight) );
+        _regions.push( RegionInfo("Zhixin Building",            20, initialWeight) );
+        _regions.push( RegionInfo("GYM",                        20, initialWeight) );
+        _regions.push( RegionInfo("Harmonia College",           20, initialWeight) );
+        _regions.push( RegionInfo("Dligentia College",          20, initialWeight) );
+        _regions.push( RegionInfo("Muse College",               20, initialWeight) );
+        _regions.push( RegionInfo("Staff Quarters",             20, initialWeight) );
+        _regions.push( RegionInfo("Chengdao Building",          20, initialWeight) );
+        _regions.push( RegionInfo("Zhiren Building",            20, initialWeight) );
+        _regions.push( RegionInfo("Letian Building",            20, initialWeight) );
+        _regions.push( RegionInfo("Shaw International Conference Centre", 20, initialWeight) );
+        _regions.push( RegionInfo("Start-up Zone",              20, initialWeight) );
+        _regions.push( RegionInfo("Daoyuan Building",           20, initialWeight) );
+         */
     }
     
     modifier isRegionNameValid(string regionName) {
@@ -84,13 +112,13 @@ contract TokenValueMapping is LguTokenERC20Base {
     function tokenNumPerUnitTime(string regionName) public view isRegionNameValid(regionName) returns (uint256) {
         uint256 totalWeight = 0;
         for (uint j = 0; j < _regions.length; j++) {
-            totalWeight += _regions[j].weight;
+            totalWeight = totalWeight.add(_regions[j].weight);
         }
         
         for (uint i = 0; i < _regions.length; i++) {
             if (keccak256(abi.encodePacked(regionName)) == keccak256(abi.encodePacked( _regions[i].name ))) {
                 uint256 regionBonus = totalBonus.mul(_regions[i].weight).div(totalWeight);      // totalBonus * regionWeight / totalWeight
-                return _regions[i].base + regionBonus;
+                return _regions[i].base.add(regionBonus);
             }
         }
         
@@ -107,7 +135,7 @@ contract TokenValueMapping is LguTokenERC20Base {
         uint256 weightIncrement = timeSpan.div(_regions.length - 1);
         for (uint i = 0; i < _regions.length; i++) {
             if (keccak256(abi.encodePacked(regionName)) != keccak256(abi.encodePacked( _regions[i].name ))){
-                _regions[i].weight += weightIncrement;
+                _regions[i].weight = _regions[i].weight.add(weightIncrement);
             }
         }
         
