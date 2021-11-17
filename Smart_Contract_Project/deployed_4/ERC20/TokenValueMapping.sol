@@ -28,6 +28,34 @@ contract TokenValueMapping is LguTokenERC20Base {
         _regions.push( RegionInfo("TA", 15, initialWeight) );
         _regions.push( RegionInfo("Shaw", 10, initialWeight) );
         _regions.push( RegionInfo("Gym", 20, initialWeight) );
+
+        /*
+        _regions.push( RegionInfo("NOWHERE",                    20, initialWeight) );
+        _regions.push( RegionInfo("Administration Building",    20, initialWeight) );
+        _regions.push( RegionInfo("University Library",         20, initialWeight) );
+        _regions.push( RegionInfo("Student Center",             20, initialWeight) );
+        _regions.push( RegionInfo("TA",                         20, initialWeight) );
+        _regions.push( RegionInfo("Million Avenue",             20, initialWeight) );
+        _regions.push( RegionInfo("TB",                         20, initialWeight) );
+        _regions.push( RegionInfo("TC",                         20, initialWeight) );
+        _regions.push( RegionInfo("TD",                         20, initialWeight) );
+        _regions.push( RegionInfo("RA",                         20, initialWeight) );
+        _regions.push( RegionInfo("RB",                         20, initialWeight) );
+        _regions.push( RegionInfo("Shaw College East",          20, initialWeight) );
+        _regions.push( RegionInfo("Shaw College West",          20, initialWeight) );
+        _regions.push( RegionInfo("Zhixin Building",            20, initialWeight) );
+        _regions.push( RegionInfo("GYM",                        20, initialWeight) );
+        _regions.push( RegionInfo("Harmonia College",           20, initialWeight) );
+        _regions.push( RegionInfo("Dligentia College",          20, initialWeight) );
+        _regions.push( RegionInfo("Muse College",               20, initialWeight) );
+        _regions.push( RegionInfo("Staff Quarters",             20, initialWeight) );
+        _regions.push( RegionInfo("Chengdao Building",          20, initialWeight) );
+        _regions.push( RegionInfo("Zhiren Building",            20, initialWeight) );
+        _regions.push( RegionInfo("Letian Building",            20, initialWeight) );
+        _regions.push( RegionInfo("Shaw International Conference Centre", 20, initialWeight) );
+        _regions.push( RegionInfo("Start-up Zone",              20, initialWeight) );
+        _regions.push( RegionInfo("Daoyuan Building",           20, initialWeight) );
+         */
     }
     
     modifier isRegionNameValid(string regionName) {
