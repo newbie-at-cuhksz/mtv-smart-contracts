@@ -39,7 +39,7 @@ contract LguMetaverseEditor is Ownable, ERC721 {
 
     struct LguModel {
         string name;
-        string content;
+        string content;      // MD5 hash of model
     }
     
     LguModel[] public LguModels;
@@ -47,13 +47,13 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     mapping (uint => address) public LguModelToOwner;
     mapping (address => uint) ownerLguModelCount;
     
-    address _lguTokenContractAddr;
+    address _lguTokenContractAddr;     // ERC20
     
     function SetLguTokenContractAddr(address newAddr) external onlyOwner {
         _lguTokenContractAddr = newAddr;
     }
     
-    function CreateLguModel(string memory _name, string memory _content) public {
+    function CreateLguModel(address _creator, string memory _name, string memory _content) public {
         require(
             msg.sender == owner() ||
             msg.sender == _lguTokenContractAddr
@@ -61,8 +61,8 @@ contract LguMetaverseEditor is Ownable, ERC721 {
         
         LguModels.push( LguModel(_name, _content) );
         uint id = LguModels.length - 1;
-        LguModelToOwner[id] = msg.sender;
-        ownerLguModelCount[msg.sender] = ownerLguModelCount[msg.sender].add(1);
+        LguModelToOwner[id] = _creator;
+        ownerLguModelCount[_creator] = ownerLguModelCount[_creator].add(1);
         emit NewLguModel(id, _name, _content);
     }
     

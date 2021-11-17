@@ -84,13 +84,13 @@ contract TokenValueMapping is LguTokenERC20Base {
     function tokenNumPerUnitTime(string regionName) public view isRegionNameValid(regionName) returns (uint256) {
         uint256 totalWeight = 0;
         for (uint j = 0; j < _regions.length; j++) {
-            totalWeight += _regions[j].weight;
+            totalWeight = totalWeight.add(_regions[j].weight);
         }
         
         for (uint i = 0; i < _regions.length; i++) {
             if (keccak256(abi.encodePacked(regionName)) == keccak256(abi.encodePacked( _regions[i].name ))) {
                 uint256 regionBonus = totalBonus.mul(_regions[i].weight).div(totalWeight);      // totalBonus * regionWeight / totalWeight
-                return _regions[i].base + regionBonus;
+                return _regions[i].base.add(regionBonus);
             }
         }
         
@@ -107,7 +107,7 @@ contract TokenValueMapping is LguTokenERC20Base {
         uint256 weightIncrement = timeSpan.div(_regions.length - 1);
         for (uint i = 0; i < _regions.length; i++) {
             if (keccak256(abi.encodePacked(regionName)) != keccak256(abi.encodePacked( _regions[i].name ))){
-                _regions[i].weight += weightIncrement;
+                _regions[i].weight = _regions[i].weight.add(weightIncrement);
             }
         }
         

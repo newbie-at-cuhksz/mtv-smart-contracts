@@ -33,7 +33,6 @@ contract LguToken is TokenValueMapping {
     
     
     // interaction with LguMetaverseEditor
-    // need to be adjusted!!
     LguMetaverseEditorInterface lguMetaverseEditorInterface;
     uint256 private _createNftFee = 10;
 
@@ -41,12 +40,12 @@ contract LguToken is TokenValueMapping {
         return _createNftFee;
     }
     
-    function SetNftAddr(address newAddr) external onlyOwner {
-        lguMetaverseEditorInterface = LguMetaverseEditorInterface(newAddr);
-    }
-    
     function SetCreateNftFee(uint256 newFee) external onlyOwner {
         _createNftFee = newFee;
+    }
+    
+    function SetNftAddr(address newAddr) external onlyOwner {
+        lguMetaverseEditorInterface = LguMetaverseEditorInterface(newAddr);
     }
     
     function CreateNft(string _nftName, string _nftContent) external {
