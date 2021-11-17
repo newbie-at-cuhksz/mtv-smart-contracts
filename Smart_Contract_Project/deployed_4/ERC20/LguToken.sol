@@ -6,7 +6,7 @@ import "./TokenValueMapping.sol";
 
 
 contract LguMetaverseEditorInterface {
-    function CreateLguModel(string memory _name, string memory _content) public;
+    function CreateLguModel(address _creator, string memory _name, string memory _content) public;
 }
 
 
@@ -51,7 +51,7 @@ contract LguToken is TokenValueMapping {
     function CreateNft(string _nftName, string _nftContent) external {
         _burn(msg.sender, _createNftFee);
         
-        lguMetaverseEditorInterface.CreateLguModel(_nftName, _nftContent);
+        lguMetaverseEditorInterface.CreateLguModel(msg.sender, _nftName, _nftContent);
     }
 
 }

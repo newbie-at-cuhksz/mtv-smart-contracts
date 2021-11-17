@@ -2,8 +2,8 @@
 
 ## 1. Info
 
-* Contract Address: 
-* Owner: 
+* Contract Address: 0xad84fc9c84d327f33be15e49c0b32846d06cc3e9
+* Owner: 0xa8eea568452bd79502839fde0675347b47a54913
 
 ## 2. Process
 
@@ -11,4 +11,4 @@
 
 * Deployed in WeBASE
 
-  
+
