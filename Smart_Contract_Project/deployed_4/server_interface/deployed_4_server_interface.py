@@ -18,7 +18,7 @@ import traceback
 ################################################
 ########### Interface: LguToken.sol ############
 
-### directly grant user(`account`) `amount` of tokens
+### func: directly grant user(`account`) `amount` of tokens
 ### (This function is not encouraged to be used, since it is not blockchain-style implementation)
 ### input:
 ###     `account`: str, user eth account address
