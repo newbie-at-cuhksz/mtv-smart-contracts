@@ -24,8 +24,8 @@ def LguToken_grantTokenDirectly1(account, amount):
 
         # 签名交易
         args = [to_checksum_address(account), amount]
-        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "set", args)
-        print("receipt:", receipt)
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenDirectly1", args)
+        #print("receipt:", receipt)
 
     except BcosException as e:
         print("execute demo_transaction failed ,BcosException for: {}".format(e))
