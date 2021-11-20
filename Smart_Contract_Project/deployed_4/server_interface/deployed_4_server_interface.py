@@ -46,6 +46,20 @@ def LguToken_grantTokenDirectly1(account, amount):
     #     client.finish()
     #     traceback.print_exc()
 
+
+### func: get the token number per unit time in `regionName`
+### input: `regionName`, str
+### output: int, token value per unit time
+def Lgu_tokenNumPerUnitTime(regionName):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [regionName]
+        res = client.call(LguToken_address, LguToken_abi, "tokenNumPerUnitTime", args)
+        client.finish()
+        return True, res
+    except:
+        return False, -1
 ################################################
 
 
@@ -58,7 +72,13 @@ def demo():
     user_address = "0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55"
     user_privateKey = "0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae"
 
-    LguToken_grantTokenDirectly1(user_address, 30)
+    #isSuccess = LguToken_grantTokenDirectly1(user_address, 30)
+    isSuccess = False
+    isSuccess, res = Lgu_tokenNumPerUnitTime("University Library")
+    if isSuccess:
+        print("tokenNumPerUnitTime of University Library: ", res[0])
+        print( type(res[0]) )        #int
+        print( type(res) )           #tuple
 
 
 
