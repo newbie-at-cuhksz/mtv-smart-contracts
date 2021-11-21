@@ -23,7 +23,8 @@ import traceback
 ### input:
 ###     `account`: str, user eth account address
 ###     `amount` : int, the amount of tokens to be granted to user
-### output: bool, whether this transaction completes successfully
+### output: 
+##      bool, whether this transaction completes successfully
 def LguToken_grantTokenDirectly1(account, amount):
     try:
         client = BcosClientEth(LguToken_ownerPrivateKey)
@@ -36,53 +37,111 @@ def LguToken_grantTokenDirectly1(account, amount):
         return True
     except:
         return False
-    # except BcosException as e:
-    #     print("execute demo_transaction failed ,BcosException for: {}".format(e))
-    #     traceback.print_exc()
-    # except BcosError as e:
-    #     print("execute demo_transaction failed ,BcosError for: {}".format(e))
-    #     traceback.print_exc()
-    # except Exception as e:
-    #     client.finish()
-    #     traceback.print_exc()
+
+
+### func: grant user(`account`) tokens
+### input:
+###     `account`: str, user eth account address
+###     `timeSpan` : int, unit time user stay in `regionName`
+###     `regionName`: str
+### output: 
+##      bool, whether this transaction completes successfully
+def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
+    try:
+        client = BcosClientEth(LguToken_ownerPrivateKey)
+
+        args = [to_checksum_address(account), timeSpan, regionName]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenOnHookOnBlockchain", args)
+        client.finish()
+
+        return True
+    except:
+        return False
+
+
+### func: get number of tokens a user holds (`who`)
+### input: 
+##     `who`: str, address
+### output: 
+###    bool, whether this function completes successfully
+###    int, token amount held by this user
+def LguToken_balanceOf(who):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [to_checksum_address(who)]
+        res = client.call(LguToken_address, LguToken_abi, "balanceOf", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, -1
 
 
 ### func: get the token number per unit time in `regionName`
-### input: `regionName`, str
-### output: int, token value per unit time
-def Lgu_tokenNumPerUnitTime(regionName):
+### input: 
+##     `regionName`: str (can only be "University Library", "TA", "Shaw", "Gym" at this point)
+### output: 
+###    bool, whether this function completes successfully
+###    int, token value per unit time
+def LguToken_tokenNumPerUnitTime(regionName):
     try:
         client = BcosClientEth(dummy_privateKey)
 
         args = [regionName]
         res = client.call(LguToken_address, LguToken_abi, "tokenNumPerUnitTime", args)
         client.finish()
-        return True, res
+        return True, res[0]
     except:
         return False, -1
 ################################################
 
 
 
+################################################
 # 测试函数
 def demo():
     # 初始化以太坊钱包（以下公私钥由Metamask生成）
     #address:     0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55
     #privateKey:  0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae
-    user_address = "0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55"
-    user_privateKey = "0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae"
+    user_gary_address = "0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55"
+    user_gary_privateKey = "0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae"
 
-    #isSuccess = LguToken_grantTokenDirectly1(user_address, 30)
+
     isSuccess = False
-    isSuccess, res = Lgu_tokenNumPerUnitTime("University Library")
+    isSuccess, res = LguToken_tokenNumPerUnitTime("University Library")
     if isSuccess:
-        print("tokenNumPerUnitTime of University Library: ", res[0])
-        print( type(res[0]) )        #int
-        print( type(res) )           #tuple
+        print("tokenNumPerUnitTime of University Library: ", res)
+
+    isSuccess = False
+    isSuccess, res = LguToken_tokenNumPerUnitTime("TA")
+    if isSuccess:
+        print("tokenNumPerUnitTime of TA: ", res)
+
+    isSuccess = False
+    isSuccess, res = LguToken_balanceOf(user_gary_address)
+    if isSuccess:
+        print("This user holds **", res, "** tokens")
+
+    if LguToken_grantTokenOnHookOnBlockchain(user_gary_address, 30, "University Library"):
+        print("This user is granted with tokens successfully")
+
+    isSuccess = False
+    isSuccess, res = LguToken_balanceOf(user_gary_address)
+    if isSuccess:
+        print("This user holds **", res, "** tokens")
 
 
+    isSuccess = False
+    isSuccess, res = LguToken_tokenNumPerUnitTime("University Library")
+    if isSuccess:
+        print("tokenNumPerUnitTime of University Library: ", res)
 
-################################################
+    isSuccess = False
+    isSuccess, res = LguToken_tokenNumPerUnitTime("TA")
+    if isSuccess:
+        print("tokenNumPerUnitTime of TA: ", res)
+
+
 # 运行入口
 
 # 声明全局变量
