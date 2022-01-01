@@ -148,12 +148,12 @@ def demo():
 dummy_privateKey = "0x3c8ebf53a8b84f06a09f0207a314f5aed3d5a123c1539d3485f0afd7b36c77f6"  #全局变量，从区块链上读数据实际不需要私钥签名，但由于sdk限制，在此设定一个无用的私钥用于初始化client("address":"0xab5159fa9222e4787e53fb67394bf65c23d88ac9")
 
 # 加载合约ABI - LguToken
-abi_LguToken = "deployed_4_server_interface/LguToken.abi"
+abi_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
 data_parser1.load_abi_file(abi_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                  #全局变量，在接口中被使用
-LguToken_address = "0xad84fc9c84d327f33be15e49c0b32846d06cc3e9"                           #全局变量，在接口中被使用 (合约地址)
-LguToken_ownerPrivateKey = "0x721ea4a6ee1bff772ae0de6af6bb499eb44ea97ae11f7c55d3c1450b4ffbd246"
+LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                           #全局变量，在接口中被使用 (合约地址)
+LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"
 
 
 # # 加载合约ABI - LguMetaverseEditor
