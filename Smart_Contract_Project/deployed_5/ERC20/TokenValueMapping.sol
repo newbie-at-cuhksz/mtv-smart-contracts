@@ -15,6 +15,7 @@ contract TokenValueMapping is LguTokenERC20Base {
     
     uint256 private initialWeight = 100;
     
+    // the following two variables are not used, due to the bug of FISCO-BCOS
     uint256 private resetRegionWeightPeriod = 1 days;   // reset region weight every day
     uint256 private nextResetTime;
     
@@ -24,12 +25,13 @@ contract TokenValueMapping is LguTokenERC20Base {
     constructor() internal {
         nextResetTime = now + resetRegionWeightPeriod;
         
+        /*
         _regions.push( RegionInfo("University Library", 20, initialWeight) );
         _regions.push( RegionInfo("TA", 15, initialWeight) );
         _regions.push( RegionInfo("Shaw", 10, initialWeight) );
         _regions.push( RegionInfo("Gym", 20, initialWeight) );
-
-        /*
+        */
+        
         _regions.push( RegionInfo("NOWHERE",                    20, initialWeight) );
         _regions.push( RegionInfo("Administration Building",    20, initialWeight) );
         _regions.push( RegionInfo("University Library",         20, initialWeight) );
@@ -55,7 +57,7 @@ contract TokenValueMapping is LguTokenERC20Base {
         _regions.push( RegionInfo("Shaw International Conference Centre", 20, initialWeight) );
         _regions.push( RegionInfo("Start-up Zone",              20, initialWeight) );
         _regions.push( RegionInfo("Daoyuan Building",           20, initialWeight) );
-         */
+        
     }
     
     modifier isRegionNameValid(string regionName) {
@@ -103,13 +105,13 @@ contract TokenValueMapping is LguTokenERC20Base {
         _regions.push( RegionInfo(regionName, regionBase, initialWeight) );
     }
     
-    function resetRegionWeight() private {
+    function resetRegionWeight() public onlyOwner {
         for (uint i = 0; i < _regions.length; i++) {
             _regions[i].weight = initialWeight;
         }
     }
     
-    function tokenNumPerUnitTime(string regionName) public view isRegionNameValid(regionName) returns (uint256) {
+    function getTokenNumPerUnitTime(string regionName) public view isRegionNameValid(regionName) returns (uint256) {
         uint256 totalWeight = 0;
         for (uint j = 0; j < _regions.length; j++) {
             totalWeight = totalWeight.add(_regions[j].weight);
@@ -128,7 +130,7 @@ contract TokenValueMapping is LguTokenERC20Base {
     function grantTokenOnHookOnBlockchain(address account, uint256 timeSpan, string regionName) external isRegionNameValid(regionName) onlyOwner {
         
         // grant tokens
-        uint256 amount = timeSpan.mul( tokenNumPerUnitTime(regionName) );
+        uint256 amount = timeSpan.mul( getTokenNumPerUnitTime(regionName) );
         _mint(account, amount);
         
         // update region weights
@@ -140,10 +142,11 @@ contract TokenValueMapping is LguTokenERC20Base {
         }
         
         // reset region weight if needed
-        if (now >= nextResetTime) {
-            resetRegionWeight();
-            nextResetTime = now + resetRegionWeightPeriod;
-        }
+        // (this is disabled due to the bug of FISCO-BCOS)
+        // if (now >= nextResetTime) {
+        //     resetRegionWeight();
+        //     nextResetTime = now + resetRegionWeightPeriod;
+        // }
     }
 
 }
