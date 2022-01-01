@@ -3,16 +3,14 @@ pragma solidity>=0.4.24 <0.6.11;
 
 // ref: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol
 
-import "./ownable.sol";
-import "./safemath.sol";
-import "./erc721.sol";
+import "./Ownable.sol";
+import "./Safemath.sol";
+import "./IERC721.sol";
 
 
 contract LguMetaverseEditor is Ownable, ERC721 {
     
     using SafeMath for uint256;
-    using SafeMath32 for uint32;
-    using SafeMath16 for uint16;
     
     // Token name
     string private _tokenName = "LGU Model NFT";
