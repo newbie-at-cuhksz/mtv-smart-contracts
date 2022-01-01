@@ -11,29 +11,8 @@ import "./IERC721.sol";
 contract LguMetaverseEditor is Ownable, ERC721 {
     
     using SafeMath for uint256;
-    
-    // Token name
-    string private _tokenName = "LGU Model NFT";
-    // Token symbol
-    string private _tokenSymbol = "LGU-NFT";
-    
-    // constructor() internal {
-    //      _tokenName = "LGU Model NFT";
-    //      _tokenSymbol = "LGU-NFT";
-    // }
-    
-    // ERC721Metadata-name
-    function tokenName() public view returns (string memory) {
-        return _tokenName;
-    }
-    
-    // ERC721Metadata-symbol
-    function tokenSymbol() public view  returns (string memory) {
-        return _tokenSymbol;
-    }
-    
+
     event NewLguModel(uint LguModelId, string name, string content);
-    
 
     struct LguModel {
         string name;
@@ -45,12 +24,15 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     mapping (uint => address) public LguModelToOwner;
     mapping (address => uint) ownerLguModelCount;
     
+
+    // interaction with LguToken (ERC20)
     address _lguTokenContractAddr;     // ERC20
     
     function SetLguTokenContractAddr(address newAddr) external onlyOwner {
         _lguTokenContractAddr = newAddr;
     }
     
+
     function CreateLguModel(address _creator, string memory _name, string memory _content) public {
         require(
             msg.sender == owner() ||
@@ -116,7 +98,7 @@ contract LguMetaverseEditor is Ownable, ERC721 {
         emit Transfer(_from, _to, _tokenId);
     }
     
-    function transferFrom(address _from, address _to, uint256 _tokenId) external payable {
+    function transferFrom(address _from, address _to, uint256 _tokenId) external {
         require ( _isApprovedOrOwner(msg.sender, _tokenId), "ERC721: transfer caller is not owner nor approved" );
         
         _transfer(_from, _to, _tokenId);
@@ -136,14 +118,13 @@ contract LguMetaverseEditor is Ownable, ERC721 {
     //     require(_checkOnERC721Received(from, to, tokenId, _data), "ERC721: transfer to non ERC721Receiver implementer"); // _checkOnERC721Received() not implemented
     // }
     
-    
-    
+
     function _approve (address _to, uint256 _tokenId) internal {
         _modelApprovals[_tokenId] = _to;
         emit Approval(msg.sender, _to, _tokenId);
     }
     
-    function approve(address to, uint256 tokenId) external payable {
+    function approve(address to, uint256 tokenId) external {
         address owner = ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
         
@@ -184,4 +165,3 @@ contract LguMetaverseEditor is Ownable, ERC721 {
         return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
     }
 }
-
