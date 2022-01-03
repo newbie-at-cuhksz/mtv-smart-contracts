@@ -13,7 +13,7 @@ contract TokenValueMapping is LguTokenERC20Base {
     
     uint256 private totalBonus = 200;
     
-    uint256 private initialWeight = 100;
+    uint256 private initialWeight = 1000;
     
     // the following two variables are not used, due to the bug of FISCO-BCOS
     uint256 private resetRegionWeightPeriod = 1 days;   // reset region weight every day
@@ -134,7 +134,8 @@ contract TokenValueMapping is LguTokenERC20Base {
         _mint(account, amount);
         
         // update region weights
-        uint256 weightIncrement = timeSpan.div(_regions.length - 1);
+        //uint256 weightIncrement = timeSpan.div(_regions.length - 1);
+        uint256 weightIncrement = timeSpan;         // Since there are over 20 region, if users ask for token, say every 5 min, `weightIncrement` will always be 0
         for (uint i = 0; i < _regions.length; i++) {
             if (keccak256(abi.encodePacked(regionName)) != keccak256(abi.encodePacked( _regions[i].name ))){
                 _regions[i].weight = _regions[i].weight.add(weightIncrement);
