@@ -96,8 +96,11 @@ def LguToken_tokenNumPerUnitTime(regionName):
 
 
 ### func: the user (userPrivateKey) spend some tokens and create a NFT
-### note: 这个函数不会提前检查该用户是否有足够的token用于创造NFT，但智能合约会做检测，
-###       如果token数目不足，函数会return false，新的NFT不会被创造
+### *note: 这个函数不会提前检查该用户是否有足够的token用于创造NFT，但智能合约会做检测:
+###       - 如果token数目不足，函数仍会**return true**，但新的NFT不会被创造。
+###         所以，在调用该接口前，应提前检测用户是否拥有足够的token，以保证用户体验
+###         (return true/false 只表示我们的交易是否成功被发送至区块链，但区块链可以因token不足拒绝我们创造NFT的请求)
+###       - 如果token数目充足，合约会自动扣除相应数目的token，无需服务器做任何额外的扣除操作
 ### input:
 ###     userPrivateKey: str, user's private key
 ###     nftName: str, 用户给NFT取的名字
@@ -185,5 +188,9 @@ LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c
 
 
 #demo()
-LguToken_CreateNft("0x818352bbd9b3b1d66c44f278ad232e62cebfc2465dbf4deaae089617b3e24f84", "NFT1", "NFT1_c")
+isSuccess = LguToken_CreateNft("0x1ff515fe1d2326f1026ce679342233e00c45108b786a76f7bd8034c6aaf1722e", "NFT2", "NFT2_c")
+if (isSuccess):
+    print("Success")
+else:
+    print("fail")
 ################################################
