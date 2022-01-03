@@ -65,7 +65,7 @@ def LguToken_grantTokenDirectly2(account, timeSpan, valuePerTimeUnit):
 ### input:
 ###     `account`: str, user eth account address
 ###     `timeSpan` : int, unit time user stay in `regionName`
-###     `regionName`: str
+###     `regionName`: str (make sure the input is in `LguToken_regionList`)
 ### output: 
 ###     bool, whether this transaction completes successfully
 def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
@@ -92,10 +92,10 @@ def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
 ###     bool
 def LguToken_spendTokenDirectly(userPrivateKey, amount):
     try:
-        client = BcosClientEth(LguToken_ownerPrivateKey)
+        client = BcosClientEth(userPrivateKey)
 
-        args = [to_checksum_address(account), timeSpan, regionName]
-        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenOnHookOnBlockchain", args)
+        args = [amount]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "spendTokenDirectly", args)
         client.finish()
 
         return True
@@ -166,6 +166,24 @@ def LguToken_tokenNumPerUnitTime(regionName):
     return LguToken_getTokenNumPerUnitTime(regionName)
 
 
+### func: get the weight of `regionName`
+### input: 
+###     `regionName`: str (make sure the input is in `LguToken_regionList`)
+### output:
+###     bool
+###     int, the weight of `regionName`
+def LguToken_getRegionWeight(regionName):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [regionName]
+        res = client.call(LguToken_address, LguToken_abi, "getRegionWeight", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, -1
+
+
 ### func: 区块链上，各个region的权重会根据该地区的得到token的数量而变化（即：越多人在某地区获得token，该地区的`LguToken_tokenNumPerUnitTime`数量越小）
 ###       此函数用于重置所有地区的权重
 ### output:
@@ -176,7 +194,6 @@ def LguToken_resetRegionWeight():
 
         args = []
         receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "resetRegionWeight", args)
-        #print("receipt:", receipt)
         client.finish()
 
         return True
@@ -354,10 +371,5 @@ LguMetaverseEditor_address = "0x7aa186962b1377d859a0b074a1dd3010e0b8aaec"       
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 
-#demo()
-isSuccess = LguToken_CreateNft("0x1ff515fe1d2326f1026ce679342233e00c45108b786a76f7bd8034c6aaf1722e", "NFT2", "NFT2_c")
-if (isSuccess):
-    print("Success")
-else:
-    print("fail")
+demo()
 ################################################
