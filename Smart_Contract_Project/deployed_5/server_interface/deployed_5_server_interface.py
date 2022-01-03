@@ -15,6 +15,32 @@ import sys
 import traceback
 
 
+################################ 关于接口的注意事项 ################################
+#
+#   1. 每个API上方注释有详细的输入参数、返回值说明
+#
+#   2. 中文的注释都比较重要
+#
+#   3. 所有API的第一个返回值都为bool，它表示输入参数是否被成功递交给智能合约了，
+#      在 **参数类型** 不正确等情况发生时时，它会 return False
+#
+#   4. API **不会** 进行其他输入参数的鲁棒性验证，所有API都会尝试直接把输入的参数交给智能合约，并把智能合约的返回值交给我们。
+#
+#      当然，智能合约会检测出不合法的参数，或者不合理的请求。
+#      比如，花费10个token，但账户里的token不足10个；
+#           给一个不属于你的NFT改名……
+#
+#      当这些不合理的请求发生时，智能合约会拒绝该请求，合约里的数据不会发生变化。
+#      不过问题在于，API不会告诉我们，我们的请求被拒绝了，
+#      API的第一个返回值仍会为Ture（毕竟API已经成功把参数递交给智能合约，它的任务已经完成了），
+#      我们不应该依赖API的第一个返回值来判断调用是否成功，
+#      在调用API前，应提前做好鲁棒性检测，以保证更好的用户体验
+#
+#      （更详细的说明见对应API上方的注释）
+#
+######################################################################################
+
+
 ################################################
 ########### Interface: LguToken.sol ############
 
@@ -327,10 +353,52 @@ def LguMetaverseEditor_changeName(userPrivateKey, modelId, newName):
         return False
 
 
+### func: get the info (name and content) of the NFT indexed by `modelId`
+### input:
+###     modelId: int, the unique NFT ID owned by this user
+### output:
+###     bool, return "False" if the `modelId` does not exist (e.g. the `modelId` is too big and no NFT is associate with this ID yet)
+###     str, name of this NFT
+###     str, content of this NFT
+def LguMetaverseEditor_LguModels(modelId):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [modelId]
+        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "LguModels", args)
+        client.finish()
+        return True, res[0], res[1]
+    except:
+        return False, "", ""
+
+### Another name of `LguMetaverseEditor_LguModels`, which is easier to understand
+def LguMetaverseEditor_getModelInfo(modelId):
+    return LguMetaverseEditor_LguModels(modelId)
+
+
+### func: get the owner address of a model
+### input:
+###     modelId: int, the unique NFT ID
+### output:
+###     bool,                       与`LguMetaverseEditor_getModelInfo`不同，如果`modelId`非法，此函数仍return true
+###     str, address of the owner   (如果`modelId`非法，此处值为"0x0000000000000000000000000000000000000000")
+def LguMetaverseEditor_LguModelToOwner(modelId):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [modelId]
+        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "LguModelToOwner", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, ""
+
+
 ### func: get a list of NFT IDs owned by user
 ### input: 
 ###     owner: str, address
 ### output: 
+###     bool
 ###     tuple of int: list of NFT IDs owned by user
 def LguMetaverseEditor_getModelsByOwner(owner):
     try:
@@ -457,7 +525,6 @@ def demo_LguMetaverseEditor():
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
     print("User1 has the following NFTs: ")
     print(nftList)
-    print(type(nftList))
 
     isSuccess, balance = LguMetaverseEditor_balanceOf(user3_address)
     print("User3 has %d NFTs" % balance)
@@ -465,7 +532,36 @@ def demo_LguMetaverseEditor():
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user3_address)
     print("User3 has the following NFTs: ")
     print(nftList)
-    print(type(nftList))
+
+    isSuccess, name, content = LguMetaverseEditor_getModelInfo(0)
+    print(isSuccess)
+    print("The info of NFT 0 is --- name: " + name + "; content: " + content)
+    print(type(name))
+    print(type(content))
+
+    isSuccess, name, content = LguMetaverseEditor_getModelInfo(1)
+    print(isSuccess)
+    print("The info of NFT 1 is --- name: " + name + "; content: " + content)
+    print(type(name))
+    print(type(content))
+
+    isSuccess, name, content = LguMetaverseEditor_getModelInfo(100)
+    print(isSuccess)
+    print("The info of NFT 100 is --- name: |" + name + "|; content: |" + content)
+    print(type(name))
+    print(type(content))
+
+    print("======================================================")
+    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner("0")
+    print(isSuccess)
+    print("Owner of NFT 0 is: %s" % ownerAddr)
+
+    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(1)
+    print("Owner of NFT 1 is: %s" % ownerAddr)
+
+    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(100)
+    print(isSuccess)
+    print("Owner of NFT 100 is: %s" % ownerAddr)
 
 
 # 运行入口
