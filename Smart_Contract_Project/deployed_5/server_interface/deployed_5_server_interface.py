@@ -126,17 +126,17 @@ def LguToken_transfer(userPrivateKey, to, value):
         return False
 
 
-### func: get number of tokens a user holds (`who`)
+### func: get number of tokens a user holds (`owner`)
 ### input: 
-###    `who`: str, address
+###    owner: str, address
 ### output: 
 ###    bool, whether this function completes successfully
 ###    int, token amount held by this user
-def LguToken_balanceOf(who):
+def LguToken_balanceOf(owner):
     try:
         client = BcosClientEth(dummy_privateKey)
 
-        args = [to_checksum_address(who)]
+        args = [to_checksum_address(owner)]
         res = client.call(LguToken_address, LguToken_abi, "balanceOf", args)
         client.finish()
         return True, res[0]
@@ -276,8 +276,77 @@ def LguToken_SetCreateNftFee(newFee):
 ################################################
 
 
+##########################################################
+########### Interface: LguMetaverseEditor.sol ############
 
-################################################
+# 关于NFT：每个NFT都有一个unique ID, 这个ID维护在区块链上。
+#         每当有新的NFT被创造，新的 NFT ID 为当前最大(ID+1)。
+#
+#         我知道数据服务器也给每个模型(NFT)维护了一个模型ID用于数据同步，
+#         值得一提的是，"区块链上的NFT ID" 和 "数据服务器的模型ID" 是可以inconsistent的
+#         即：数据服务器的模型仅用于我们做数据同步，而区块链上的NFT ID用于显示在UI上，给玩家看.
+#         这边怎么方便怎么来
+
+### func: get number of NFTs a user holds (`owner`)
+### input: 
+###    owner: str, address
+### output: 
+###    bool, whether this function completes successfully
+###    int, number of NFTs held by this user
+def LguMetaverseEditor_balanceOf(owner):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [to_checksum_address(owner)]
+        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "balanceOf", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, -1
+
+
+### func: change name of a NFT
+### *note: 此API不会检测`modelId`是否属于发起改名的用户(`userPrivateKey`)
+###        如果`modelId`不属于该用户，此函数仍return true，改名将不会发生在区块链上
+###        (类似`LguToken_CreateNft`)
+### input: 
+###     userPrivateKey: str, user private key
+###     modelId: int, the unique NFT ID owned by this user
+###     newName: str, new name for this NFT
+### output:
+###     bool
+def LguMetaverseEditor_changeName(userPrivateKey, modelId, newName):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [modelId, newName]
+        res = client.sendRawTransactionGetReceipt(LguMetaverseEditor_address, LguMetaverseEditor_abi, "changeName", args)
+        client.finish()
+        return True
+    except:
+        return False
+
+
+### func: get a list of NFT IDs owned by user
+### input: 
+###     owner: str, address
+### output: 
+###     tuple of int: list of NFT IDs owned by user
+def LguMetaverseEditor_getModelsByOwner(owner):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [to_checksum_address(owner)]
+        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "getModelsByOwner", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, tuple()
+
+##########################################################
+
+
+##########################################################
 # 测试函数
 def demo():
     # 以下为随机生成的ETH钱包
@@ -371,6 +440,33 @@ def demo():
     isSuccess, balance = LguToken_balanceOf(user1_address)
     print("User1: have %d tokens" % balance)
 
+def demo_LguMetaverseEditor():
+    # 以下为随机生成的ETH钱包
+    user1_address = "0xE2fD835d8d064B672d16970B6739F177253F1499"
+    user1_privateKey = "0x818352bbd9b3b1d66c44f278ad232e62cebfc2465dbf4deaae089617b3e24f84"
+
+    user2_address = "0xc3b3131e171D8FBcB11A98a964D4dA97C284178c"
+    user2_privateKey = "0x1ff515fe1d2326f1026ce679342233e00c45108b786a76f7bd8034c6aaf1722e"
+
+    user3_address = "0x69A36F7252C46e7667dCaF45952cB4d5d983cBf5"
+    user3_privateKey = "0x4030f93a771d4d711a5395fc515f65f41de1ae709d7f97df5212f9d962ed9557"
+
+    isSuccess, balance = LguMetaverseEditor_balanceOf(user1_address)
+    print("User1 has %d NFTs" % balance)
+
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
+    print("User1 has the following NFTs: ")
+    print(nftList)
+    print(type(nftList))
+
+    isSuccess, balance = LguMetaverseEditor_balanceOf(user3_address)
+    print("User3 has %d NFTs" % balance)
+
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user3_address)
+    print("User3 has the following NFTs: ")
+    print(nftList)
+    print(type(nftList))
+
 
 # 运行入口
 
@@ -382,7 +478,7 @@ abi_path_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
 data_parser1.load_abi_file(abi_path_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
-LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                                     #全局变量，在接口中被使用 (合约地址)
+LguToken_address = "0x638afacd0c162d830ea73599bbdf8d5b98653797"                                     #全局变量，在接口中被使用 (合约地址)
 LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
 LguToken_regionList = [
     "NOWHERE",
@@ -421,5 +517,6 @@ LguMetaverseEditor_address = "0x7aa186962b1377d859a0b074a1dd3010e0b8aaec"       
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 
-demo()
+#demo()
+demo_LguMetaverseEditor()
 ################################################
