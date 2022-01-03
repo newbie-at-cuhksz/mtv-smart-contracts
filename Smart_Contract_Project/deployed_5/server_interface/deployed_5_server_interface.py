@@ -24,7 +24,7 @@ import traceback
 ###     `account`: str, user eth account address
 ###     `amount` : int, the amount of tokens to be granted to user
 ### output: 
-##      bool, whether this transaction completes successfully
+###     bool, whether this transaction completes successfully
 def LguToken_grantTokenDirectly1(account, amount):
     try:
         client = BcosClientEth(LguToken_ownerPrivateKey)
@@ -45,7 +45,7 @@ def LguToken_grantTokenDirectly1(account, amount):
 ###     `timeSpan` : int, unit time user stay in `regionName`
 ###     `regionName`: str
 ### output: 
-##      bool, whether this transaction completes successfully
+###     bool, whether this transaction completes successfully
 def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
     try:
         client = BcosClientEth(LguToken_ownerPrivateKey)
@@ -61,7 +61,7 @@ def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
 
 ### func: get number of tokens a user holds (`who`)
 ### input: 
-##     `who`: str, address
+###    `who`: str, address
 ### output: 
 ###    bool, whether this function completes successfully
 ###    int, token amount held by this user
@@ -93,6 +93,26 @@ def LguToken_tokenNumPerUnitTime(regionName):
         return True, res[0]
     except:
         return False, -1
+
+
+### func: the user (userPrivateKey) spend some tokens and create a NFT
+### note: 这个函数不会提前检查该用户是否有足够的token用于创造NFT，但智能合约会做检测，
+###       如果token数目不足，函数会return false，新的NFT不会被创造
+### input:
+###     userPrivateKey: str, user's private key
+###     nftName: str, 用户给NFT取的名字
+###     nftContent: str, 模型文件的哈希值 (需要提前计算，计算方法见: https://github.com/newbie-at-cuhksz/mtv-smart-contracts/blob/main/Server_Contract_Interaction_py/MD5_py/nftContent_gen.py)
+def LguToken_CreateNft(userPrivateKey, nftName, nftContent):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [nftName, nftContent]
+        res = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "CreateNft", args)
+        client.finish()
+
+        return True
+    except:
+        return False
 ################################################
 
 
@@ -148,20 +168,22 @@ def demo():
 dummy_privateKey = "0x3c8ebf53a8b84f06a09f0207a314f5aed3d5a123c1539d3485f0afd7b36c77f6"  #全局变量，从区块链上读数据实际不需要私钥签名，但由于sdk限制，在此设定一个无用的私钥用于初始化client("address":"0xab5159fa9222e4787e53fb67394bf65c23d88ac9")
 
 # 加载合约ABI - LguToken
-abi_LguToken = "deployed_5_server_interface/LguToken.abi"
+abi_path_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
-data_parser1.load_abi_file(abi_LguToken)
-LguToken_abi = data_parser1.contract_abi                                                  #全局变量，在接口中被使用
-LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                           #全局变量，在接口中被使用 (合约地址)
-LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"
+data_parser1.load_abi_file(abi_path_LguToken)
+LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
+LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                                     #全局变量，在接口中被使用 (合约地址)
+LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
+
+# 加载合约ABI - LguMetaverseEditor
+abi_path_LguMetaverseEditor = "deployed_5_server_interface/LguMetaverseEditor.abi"
+data_parser2 = DatatypeParser()
+data_parser2.load_abi_file(abi_path_LguMetaverseEditor)
+LguMetaverseEditor_abi = data_parser2.contract_abi                                                          #全局变量，在接口中被使用
+LguMetaverseEditor_address = "0x7aa186962b1377d859a0b074a1dd3010e0b8aaec"                                   #全局变量，在接口中被使用 (合约地址)
+LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 
-# # 加载合约ABI - LguMetaverseEditor
-# abi_LguMetaverseEditor = "deployed_4_server_interface/LguMetaverseEditor.abi"
-# data_parser2 = DatatypeParser()
-# data_parser2.load_abi_file(abi_LguMetaverseEditor)
-# LguMetaverseEditor_abi = data_parser2.contract_abi                    #全局变量，在接口中被使用
-# LguMetaverseEditor_address = "0x0cb70888c4c53f3a67ea0c7052ff64522b8218d6"
-
-demo()
+#demo()
+LguToken_CreateNft("0x818352bbd9b3b1d66c44f278ad232e62cebfc2465dbf4deaae089617b3e24f84", "NFT1", "NFT1_c")
 ################################################
