@@ -39,6 +39,28 @@ def LguToken_grantTokenDirectly1(account, amount):
         return False
 
 
+### func: directly grant user(`account`) this number (timeSpan*valuePerTimeUnit) of tokens
+### (This function is not encouraged to be used, since it is not blockchain-style implementation)
+### input:
+###     account : str, user eth account address
+###     timeSpan : int
+###     valuePerTimeUnit: int
+### output: 
+###     bool, whether this transaction completes successfully
+def LguToken_grantTokenDirectly2(account, timeSpan, valuePerTimeUnit):
+    try:
+        client = BcosClientEth(LguToken_ownerPrivateKey)
+
+        args = [to_checksum_address(account), timeSpan, valuePerTimeUnit]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenDirectly2", args)
+        #print("receipt:", receipt)
+        client.finish()
+
+        return True
+    except:
+        return False
+
+
 ### func: grant user(`account`) tokens
 ### input:
 ###     `account`: str, user eth account address
@@ -52,6 +74,51 @@ def LguToken_grantTokenOnHookOnBlockchain(account, timeSpan, regionName):
 
         args = [to_checksum_address(account), timeSpan, regionName]
         receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenOnHookOnBlockchain", args)
+        client.finish()
+
+        return True
+    except:
+        return False
+
+
+### func: user(userPrivateKey) spend `amount` of tokens
+### *note: 类似`LguToken_CreateNft`该API不会检测用户是否有足够的token，
+###        如果token不足，函数任会return true，但区块链上用户token数不会变化
+###        (更多细节请参考note of `LguToken_CreateNft`)
+### input: 
+###     userPrivateKey: str, user's private key
+###     amount: int, ammount of tokens to be spent
+### output:
+###     bool
+def LguToken_spendTokenDirectly(userPrivateKey, amount):
+    try:
+        client = BcosClientEth(LguToken_ownerPrivateKey)
+
+        args = [to_checksum_address(account), timeSpan, regionName]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "grantTokenOnHookOnBlockchain", args)
+        client.finish()
+
+        return True
+    except:
+        return False
+
+
+### func: transfer `value` of tokens from `userPrivateKey` to `to`
+### *note: 类似`LguToken_CreateNft`该API不会检测用户是否有足够的token，
+###        如果token不足，函数仍会return true，但区块链上用户token数不会变化
+###        (更多细节请参考note of `LguToken_CreateNft`)
+### input:
+###     userPrivateKey: the private key of the user, who wants to give out token
+###     to: the address (public key) of the user, who receives the token
+###     value: the amount of tokens to transfer
+### output:
+###     bool
+def LguToken_transfer(userPrivateKey, to, value):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [to_checksum_address(to), value]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "transfer", args)
         client.finish()
 
         return True
@@ -79,16 +146,54 @@ def LguToken_balanceOf(who):
 
 ### func: get the token number per unit time in `regionName`
 ### input: 
-##     `regionName`: str (can only be "University Library", "TA", "Shaw", "Gym" at this point)
+##     `regionName`: str (make sure the input is in `LguToken_regionList`)
 ### output: 
 ###    bool, whether this function completes successfully
 ###    int, token value per unit time
-def LguToken_tokenNumPerUnitTime(regionName):
+def LguToken_getTokenNumPerUnitTime(regionName):
     try:
         client = BcosClientEth(dummy_privateKey)
 
         args = [regionName]
-        res = client.call(LguToken_address, LguToken_abi, "tokenNumPerUnitTime", args)
+        res = client.call(LguToken_address, LguToken_abi, "getTokenNumPerUnitTime", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, -1
+
+### (DISCARDED) Please use the new API - `LguToken_getTokenNumPerUnitTime`
+def LguToken_tokenNumPerUnitTime(regionName):
+    return LguToken_getTokenNumPerUnitTime(regionName)
+
+
+### func: 区块链上，各个region的权重会根据该地区的得到token的数量而变化（即：越多人在某地区获得token，该地区的`LguToken_tokenNumPerUnitTime`数量越小）
+###       此函数用于重置所有地区的权重
+### output:
+###     bool
+def LguToken_resetRegionWeight():
+    try:
+        client = BcosClientEth(LguToken_ownerPrivateKey)
+
+        args = []
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "resetRegionWeight", args)
+        #print("receipt:", receipt)
+        client.finish()
+
+        return True
+    except:
+        return False
+
+
+### func: get the total amount of tokens in this smart contract
+### output:
+###     bool
+###     int, total amount of tokens in this smart contract
+def LguToken_totalSupply():
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = []
+        res = client.call(LguToken_address, LguToken_abi, "totalSupply", args)
         client.finish()
         return True, res[0]
     except:
@@ -105,6 +210,8 @@ def LguToken_tokenNumPerUnitTime(regionName):
 ###     userPrivateKey: str, user's private key
 ###     nftName: str, 用户给NFT取的名字
 ###     nftContent: str, 模型文件的哈希值 (需要提前计算，计算方法见: https://github.com/newbie-at-cuhksz/mtv-smart-contracts/blob/main/Server_Contract_Interaction_py/MD5_py/nftContent_gen.py)
+### output:
+###     bool
 def LguToken_CreateNft(userPrivateKey, nftName, nftContent):
     try:
         client = BcosClientEth(userPrivateKey)
@@ -113,6 +220,39 @@ def LguToken_CreateNft(userPrivateKey, nftName, nftContent):
         res = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "CreateNft", args)
         client.finish()
 
+        return True
+    except:
+        return False
+
+
+### func: get how many tokens cost for a user to create a NFT
+### output:
+###     bool
+###     int, number of tokens cost for a user to create a NFT
+def LguToken_GetCreateNftFee():
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = []
+        res = client.call(LguToken_address, LguToken_abi, "GetCreateNftFee", args)
+        client.finish()
+        return True, res[0]
+    except:
+        return False, -1
+
+
+### func: set how many tokens cost for a user to create a NFT
+### input:
+###     newFee: int, number of tokens cost for a user to create a NFT
+### output:
+###     bool
+def LguToken_SetCreateNftFee(newFee):
+    try:
+        client = BcosClientEth(LguToken_ownerPrivateKey)
+
+        args = [newFee]
+        res = client.call(LguToken_address, LguToken_abi, "SetCreateNftFee", args)
+        client.finish()
         return True
     except:
         return False
@@ -177,6 +317,33 @@ data_parser1.load_abi_file(abi_path_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
 LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                                     #全局变量，在接口中被使用 (合约地址)
 LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
+LguToken_regionList = [
+    "NOWHERE",
+    "Administration Building",
+    "University Library",
+    "Student Center",
+    "TA",
+    "Million Avenue",
+    "TB",
+    "TC",
+    "TD",
+    "RA",
+    "RB",
+    "Shaw College East",
+    "Shaw College West",
+    "Zhixin Building",
+    "GYM",
+    "Harmonia College",
+    "Dligentia College",
+    "Muse College",
+    "Staff Quarters",
+    "Chengdao Building",
+    "Zhiren Building",
+    "Letian Building",
+    "Shaw International Conference Centre",
+    "Start-up Zone",
+    "Daoyuan Building"
+]
 
 # 加载合约ABI - LguMetaverseEditor
 abi_path_LguMetaverseEditor = "deployed_5_server_interface/LguMetaverseEditor.abi"
