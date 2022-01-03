@@ -268,7 +268,7 @@ def LguToken_SetCreateNftFee(newFee):
         client = BcosClientEth(LguToken_ownerPrivateKey)
 
         args = [newFee]
-        res = client.call(LguToken_address, LguToken_abi, "SetCreateNftFee", args)
+        res = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "SetCreateNftFee", args)
         client.finish()
         return True
     except:
@@ -280,46 +280,96 @@ def LguToken_SetCreateNftFee(newFee):
 ################################################
 # 测试函数
 def demo():
-    # 初始化以太坊钱包（以下公私钥由Metamask生成）
-    #address:     0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55
-    #privateKey:  0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae
-    user_gary_address = "0x820f3E244D73c5bF5c92A34Cc0B56E5912129f55"
-    user_gary_privateKey = "0x3e14b5b682d9768a1e37a39a6510e51b813b071c05c33b378157fbbb10c3a7ae"
+    # 以下为随机生成的ETH钱包
+    user1_address = "0xE2fD835d8d064B672d16970B6739F177253F1499"
+    user1_privateKey = "0x818352bbd9b3b1d66c44f278ad232e62cebfc2465dbf4deaae089617b3e24f84"
 
+    user2_address = "0xc3b3131e171D8FBcB11A98a964D4dA97C284178c"
+    user2_privateKey = "0x1ff515fe1d2326f1026ce679342233e00c45108b786a76f7bd8034c6aaf1722e"
 
-    isSuccess = False
-    isSuccess, res = LguToken_tokenNumPerUnitTime("University Library")
-    if isSuccess:
-        print("tokenNumPerUnitTime of University Library: ", res)
+    user3_address = "0x69A36F7252C46e7667dCaF45952cB4d5d983cBf5"
+    user3_privateKey = "0x4030f93a771d4d711a5395fc515f65f41de1ae709d7f97df5212f9d962ed9557"
 
-    isSuccess = False
-    isSuccess, res = LguToken_tokenNumPerUnitTime("TA")
-    if isSuccess:
-        print("tokenNumPerUnitTime of TA: ", res)
+    LguToken_resetRegionWeight()
+    print("reset Region Weight")
 
-    isSuccess = False
-    isSuccess, res = LguToken_balanceOf(user_gary_address)
-    if isSuccess:
-        print("This user holds **", res, "** tokens")
+    isSuccess, amount = LguToken_totalSupply()
+    print("==== total supply of tokens: %d ====" % amount)
 
-    if LguToken_grantTokenOnHookOnBlockchain(user_gary_address, 30, "University Library"):
-        print("This user is granted with tokens successfully")
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
 
-    isSuccess = False
-    isSuccess, res = LguToken_balanceOf(user_gary_address)
-    if isSuccess:
-        print("This user holds **", res, "** tokens")
+    LguToken_grantTokenDirectly1(user1_address, 10)
+    print("grantTokenDirectly1: grant user1 10 tokens")
 
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
 
-    isSuccess = False
-    isSuccess, res = LguToken_tokenNumPerUnitTime("University Library")
-    if isSuccess:
-        print("tokenNumPerUnitTime of University Library: ", res)
+    LguToken_grantTokenDirectly2(user1_address, 2, 4)
+    print("grantTokenDirectly1: grant user1 (2*4) tokens")
 
-    isSuccess = False
-    isSuccess, res = LguToken_tokenNumPerUnitTime("TA")
-    if isSuccess:
-        print("tokenNumPerUnitTime of TA: ", res)
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    isSuccess, amount = LguToken_getTokenNumPerUnitTime("University Library")
+    print("Currently, user can get %d of token in University Library per minute" % amount)
+
+    isSuccess, amount = LguToken_getRegionWeight("Shaw International Conference Centre")
+    print("Currently, weight of Shaw International Conference Centre is %d" % amount)
+
+    LguToken_grantTokenOnHookOnBlockchain(user1_address, 30, "University Library")
+    print("grantTokenOnHookOnBlockchain: grant user1 stay in University Library for 30min")
+
+    isSuccess, amount = LguToken_getTokenNumPerUnitTime("University Library")
+    print("Currently, user can get %d of token in University Library per minute" % amount)
+
+    isSuccess, amount = LguToken_getRegionWeight("Shaw International Conference Centre")
+    print("Currently, weight of Shaw International Conference Centre is %d" % amount)
+
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    LguToken_spendTokenDirectly(user1_privateKey, 25)
+    print("spendTokenDirectly: User1 spend 25 tokens directly")
+
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    isSuccess, balance = LguToken_balanceOf(user2_address)
+    print("User2: have %d tokens" % balance)
+
+    LguToken_transfer(user1_privateKey, user2_address, 5)
+    print("User1 transfer 5 tokens to User2")
+
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    isSuccess, balance = LguToken_balanceOf(user2_address)
+    print("User2: have %d tokens" % balance)
+
+    isSuccess, amount = LguToken_totalSupply()
+    print("==== total supply of tokens: %d ====" %amount)
+
+    LguToken_resetRegionWeight()
+    print("reset Region Weight")
+
+    isSuccess, amount = LguToken_getRegionWeight("Shaw International Conference Centre")
+    print("Currently, weight of Shaw International Conference Centre is %d" % amount)
+
+    isSuccess, amount = LguToken_GetCreateNftFee()
+    print("User need to spend %d of token to create a NFT" % amount)
+
+    LguToken_SetCreateNftFee(amount + 2)
+    print("Let's increase the NFT creation fee by 2")
+
+    isSuccess, amount = LguToken_GetCreateNftFee()
+    print("User need to spend %d of token to create a NFT" % amount)
+
+    LguToken_CreateNft(user1_privateKey, "NFT-demo-01", "NFT-demo-01-content")
+    print("User1 create a NFT")
+
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
 
 
 # 运行入口
