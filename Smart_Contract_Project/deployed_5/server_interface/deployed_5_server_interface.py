@@ -607,7 +607,7 @@ abi_path_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
 data_parser1.load_abi_file(abi_path_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
-LguToken_address = "0x638afacd0c162d830ea73599bbdf8d5b98653797"                                     #全局变量，在接口中被使用 (合约地址)
+LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                                     #全局变量，在接口中被使用 (合约地址)
 LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
 LguToken_regionList = [
     "NOWHERE",
