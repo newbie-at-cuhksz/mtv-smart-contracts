@@ -21,14 +21,14 @@ import traceback
 #
 #   2. 中文的注释都比较重要
 #
-#   3. 所有API的第一个返回值都为bool，它表示输入参数是否被成功递交给智能合约了，
+#   3. 所有API的第一个返回值都为bool，它表示输入参数是否被成功递交给智能合约，
 #      在 **参数类型** 不正确等情况发生时时，它会 return False
 #
 #   4. API **不会** 进行其他输入参数的鲁棒性验证，所有API都会尝试直接把输入的参数交给智能合约，并把智能合约的返回值交给我们。
 #
 #      当然，智能合约会检测出不合法的参数，或者不合理的请求。
 #      比如，花费10个token，但账户里的token不足10个；
-#           给一个不属于你的NFT改名……
+#           给一个不属于你的NFT改名...
 #
 #      当这些不合理的请求发生时，智能合约会拒绝该请求，合约里的数据不会发生变化。
 #      不过问题在于，API不会告诉我们，我们的请求被拒绝了，
@@ -41,8 +41,8 @@ import traceback
 ######################################################################################
 
 
-################################################
-########### Interface: LguToken.sol ############
+################################################################
+###############     Interface: LguToken.sol     ################
 
 ### func: directly grant user(`account`) `amount` of tokens
 ### (This function is not encouraged to be used, since it is not blockchain-style implementation)
@@ -134,9 +134,9 @@ def LguToken_spendTokenDirectly(userPrivateKey, amount):
 ###        如果token不足，函数仍会return true，但区块链上用户token数不会变化
 ###        (更多细节请参考note of `LguToken_CreateNft`)
 ### input:
-###     userPrivateKey: the private key of the user, who wants to give out token
-###     to: the address (public key) of the user, who receives the token
-###     value: the amount of tokens to transfer
+###     userPrivateKey:     str, the private key of the user, who wants to give out token
+###     to:                 str, the address (public key) of the user, who receives the token
+###     value:              int, the amount of tokens to transfer
 ### output:
 ###     bool
 def LguToken_transfer(userPrivateKey, to, value):
@@ -251,8 +251,8 @@ def LguToken_totalSupply():
 ###       - 如果token数目充足，合约会自动扣除相应数目的token，无需服务器做任何额外的扣除操作
 ### input:
 ###     userPrivateKey: str, user's private key
-###     nftName: str, 用户给NFT取的名字
-###     nftContent: str, 模型文件的哈希值 (需要提前计算，计算方法见: https://github.com/newbie-at-cuhksz/mtv-smart-contracts/blob/main/Server_Contract_Interaction_py/MD5_py/nftContent_gen.py)
+###     nftName:        str, 用户给NFT取的名字
+###     nftContent:     str, 模型文件的哈希值 (需要服务器提前计算，计算方法见: https://github.com/newbie-at-cuhksz/mtv-smart-contracts/blob/main/Server_Contract_Interaction_py/MD5_py/nftContent_gen.py)
 ### output:
 ###     bool
 def LguToken_CreateNft(userPrivateKey, nftName, nftContent):
@@ -302,11 +302,12 @@ def LguToken_SetCreateNftFee(newFee):
 ################################################
 
 
-##########################################################
-########### Interface: LguMetaverseEditor.sol ############
+##################################################################
+###########     Interface: LguMetaverseEditor.sol     ############
 
 # 关于NFT：每个NFT都有一个unique ID, 这个ID维护在区块链上。
 #         每当有新的NFT被创造，新的 NFT ID 为当前最大(ID+1)。
+#         即：NFT ID 由 0, 1, 2, 3... 顺序增长
 #
 #         我知道数据服务器也给每个模型(NFT)维护了一个模型ID用于数据同步，
 #         值得一提的是，"区块链上的NFT ID" 和 "数据服务器的模型ID" 是可以inconsistent的
@@ -357,7 +358,7 @@ def LguMetaverseEditor_changeName(userPrivateKey, modelId, newName):
 ### input:
 ###     modelId: int, the unique NFT ID owned by this user
 ### output:
-###     bool, return "False" if the `modelId` does not exist (e.g. the `modelId` is too big and no NFT is associate with this ID yet)
+###     bool, return "False" if the `modelId` does not exist (e.g. the `modelId` is too big and no NFT is associated with this ID yet)
 ###     str, name of this NFT
 ###     str, content of this NFT
 def LguMetaverseEditor_LguModels(modelId):
@@ -371,7 +372,7 @@ def LguMetaverseEditor_LguModels(modelId):
     except:
         return False, "", ""
 
-### Another name of `LguMetaverseEditor_LguModels`, which is easier to understand
+### Another name of `LguMetaverseEditor_LguModels`, which is easier to understand in terms of function naming
 def LguMetaverseEditor_getModelInfo(modelId):
     return LguMetaverseEditor_LguModels(modelId)
 
@@ -380,8 +381,8 @@ def LguMetaverseEditor_getModelInfo(modelId):
 ### input:
 ###     modelId: int, the unique NFT ID
 ### output:
-###     bool,                       与`LguMetaverseEditor_getModelInfo`不同，如果`modelId`非法，此函数仍return true
-###     str, address of the owner   (如果`modelId`非法，此处值为"0x0000000000000000000000000000000000000000")
+###     bool,                       与`LguMetaverseEditor_getModelInfo`不同，如果`modelId`非法/太大，此函数仍return true
+###     str, address of the owner   (如果`modelId`非法/太大，此处值为"0x0000000000000000000000000000000000000000")
 def LguMetaverseEditor_LguModelToOwner(modelId):
     try:
         client = BcosClientEth(dummy_privateKey)
@@ -411,6 +412,28 @@ def LguMetaverseEditor_getModelsByOwner(owner):
     except:
         return False, tuple()
 
+
+### func: transfer a NFT with ID `_tokenId` from `_from` to `_to`
+### input:
+###     userPrivateKey: str, user private key
+###     _from:          str, address
+###     _to:            str, address
+###     _tokenId:       int
+### *note:  通常情况下这里的`userPrivateKey`就是`_from`(公钥/地址)所对应的私钥，意为：用户把自己拥有的NFT-`_tokenId`，转移给`_to`
+###         但是在某些情况下，`_from`可以不为`userPrivateKey`所对应的公钥，意为：用户把一个不属于自己的NFT-`_tokenId`，转移给`_to`。这种情况我们应该用不到
+### output:
+###     bool
+def LguMetaverseEditor_transferFrom(userPrivateKey, _from, _to, _tokenId):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [to_checksum_address(_from), to_checksum_address(_to), _tokenId]
+        res = client.sendRawTransactionGetReceipt(LguMetaverseEditor_address, LguMetaverseEditor_abi, "transferFrom", args)
+        client.finish()
+        return True
+    except:
+        return False
+
 ##########################################################
 
 
@@ -426,6 +449,8 @@ def demo():
 
     user3_address = "0x69A36F7252C46e7667dCaF45952cB4d5d983cBf5"
     user3_privateKey = "0x4030f93a771d4d711a5395fc515f65f41de1ae709d7f97df5212f9d962ed9557"
+
+    print("=========== Test LguToken API ===========")
 
     LguToken_resetRegionWeight()
     print("reset Region Weight")
@@ -502,66 +527,63 @@ def demo():
     isSuccess, amount = LguToken_GetCreateNftFee()
     print("User need to spend %d of token to create a NFT" % amount)
 
-    LguToken_CreateNft(user1_privateKey, "NFT-demo-01", "NFT-demo-01-content")
-    print("User1 create a NFT")
+
+    print("=========== Test LguMetaverseEditor API ===========")
 
     isSuccess, balance = LguToken_balanceOf(user1_address)
     print("User1: have %d tokens" % balance)
-
-def demo_LguMetaverseEditor():
-    # 以下为随机生成的ETH钱包
-    user1_address = "0xE2fD835d8d064B672d16970B6739F177253F1499"
-    user1_privateKey = "0x818352bbd9b3b1d66c44f278ad232e62cebfc2465dbf4deaae089617b3e24f84"
-
-    user2_address = "0xc3b3131e171D8FBcB11A98a964D4dA97C284178c"
-    user2_privateKey = "0x1ff515fe1d2326f1026ce679342233e00c45108b786a76f7bd8034c6aaf1722e"
-
-    user3_address = "0x69A36F7252C46e7667dCaF45952cB4d5d983cBf5"
-    user3_privateKey = "0x4030f93a771d4d711a5395fc515f65f41de1ae709d7f97df5212f9d962ed9557"
 
     isSuccess, balance = LguMetaverseEditor_balanceOf(user1_address)
     print("User1 has %d NFTs" % balance)
 
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
-    print("User1 has the following NFTs: ")
-    print(nftList)
+    print("User1 has the following NFTs: ", nftList)
 
-    isSuccess, balance = LguMetaverseEditor_balanceOf(user3_address)
-    print("User3 has %d NFTs" % balance)
+    LguToken_CreateNft(user1_privateKey, "NFT-demo", "NFT-demo-content")
+    print("User1 create a new NFT")
 
-    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user3_address)
-    print("User3 has the following NFTs: ")
-    print(nftList)
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
 
-    isSuccess, name, content = LguMetaverseEditor_getModelInfo(0)
-    print(isSuccess)
-    print("The info of NFT 0 is --- name: " + name + "; content: " + content)
-    print(type(name))
-    print(type(content))
+    isSuccess, balance = LguMetaverseEditor_balanceOf(user1_address)
+    print("User1 has %d NFTs" % balance)
 
-    isSuccess, name, content = LguMetaverseEditor_getModelInfo(1)
-    print(isSuccess)
-    print("The info of NFT 1 is --- name: " + name + "; content: " + content)
-    print(type(name))
-    print(type(content))
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
+    print("User1 has the following NFTs: ", nftList)
 
-    isSuccess, name, content = LguMetaverseEditor_getModelInfo(100)
-    print(isSuccess)
-    print("The info of NFT 100 is --- name: |" + name + "|; content: |" + content)
-    print(type(name))
-    print(type(content))
+    modelId = nftList[0]
+    print("We know that NFT with ID %d is owned by User1" % modelId)
+    print("We now let User1 do some operation to this NFT")
 
-    print("======================================================")
-    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner("0")
-    print(isSuccess)
-    print("Owner of NFT 0 is: %s" % ownerAddr)
+    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(modelId)
+    print("NFT-%d is owned by %s" % (modelId, ownerAddr))
+    print("Is this address equals the address of User1? -", (ownerAddr.lower() == user1_address.lower()))
 
-    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(1)
-    print("Owner of NFT 1 is: %s" % ownerAddr)
+    isSuccess, modelName, modelContent = LguMetaverseEditor_getModelInfo(modelId)
+    print("NFT-%d has info - name: %s; content: %s" % (modelId, modelName, modelContent))
 
-    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(100)
-    print(isSuccess)
-    print("Owner of NFT 100 is: %s" % ownerAddr)
+    newName = modelName + "-update"
+    LguMetaverseEditor_changeName(user1_privateKey, modelId, newName)
+    print("User1 change the name of NFT-%d to \"%s\"" % (modelId, newName))
+
+    isSuccess, modelName, modelContent = LguMetaverseEditor_getModelInfo(modelId)
+    print("NFT-%d has info - name: %s; content: %s" % (modelId, modelName, modelContent))
+
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user2_address)
+    print("User2 has the following NFTs: ", nftList)
+
+    LguMetaverseEditor_transferFrom(user1_privateKey, user1_address, user2_address, modelId)
+    print("User1 transfer NFT-%d to User2" % modelId)
+
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
+    print("User1 has the following NFTs: ", nftList)
+
+    isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user2_address)
+    print("User2 has the following NFTs: ", nftList)
+
+    isSuccess, ownerAddr = LguMetaverseEditor_LguModelToOwner(modelId)
+    print("NFT-%d is owned by %s" % (modelId, ownerAddr))
+    print("Is this address equals the address of User2? -", (ownerAddr.lower() == user2_address.lower()))
 
 
 # 运行入口
@@ -613,6 +635,5 @@ LguMetaverseEditor_address = "0x7aa186962b1377d859a0b074a1dd3010e0b8aaec"       
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 
-#demo()
-demo_LguMetaverseEditor()
+demo()
 ################################################

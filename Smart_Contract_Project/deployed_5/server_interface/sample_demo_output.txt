@@ -1,0 +1,49 @@
+[root@VM-4-12-centos FISCO-BCOS-python-sdk]# python3.7 deployed_5_server_interface.py
+=========== Test LguToken API ===========
+reset Region Weight
+==== total supply of tokens: 2435 ====
+User1: have 2420 tokens
+grantTokenDirectly1: grant user1 10 tokens
+User1: have 2430 tokens
+grantTokenDirectly1: grant user1 (2*4) tokens
+User1: have 2438 tokens
+Currently, user can get 28 of token in University Library per minute
+Currently, weight of Shaw International Conference Centre is 1000
+grantTokenOnHookOnBlockchain: grant user1 stay in University Library for 30min
+Currently, user can get 27 of token in University Library per minute
+Currently, weight of Shaw International Conference Centre is 1030
+User1: have 3278 tokens
+spendTokenDirectly: User1 spend 25 tokens directly
+User1: have 3253 tokens
+User2: have 15 tokens
+User1 transfer 5 tokens to User2
+User1: have 3248 tokens
+User2: have 20 tokens
+==== total supply of tokens: 3268 ====
+reset Region Weight
+Currently, weight of Shaw International Conference Centre is 1000
+User need to spend 16 of token to create a NFT
+Let's increase the NFT creation fee by 2
+User need to spend 18 of token to create a NFT
+=========== Test LguMetaverseEditor API ===========
+User1: have 3248 tokens
+User1 has 5 NFTs
+User1 has the following NFTs:  (4, 5, 6, 7, 8)
+User1 create a new NFT
+User1: have 3230 tokens
+User1 has 6 NFTs
+User1 has the following NFTs:  (4, 5, 6, 7, 8, 9)
+We know that NFT with ID 4 is owned by User1
+We now let User1 do some operation to this NFT
+NFT-4 is owned by 0xe2fd835d8d064b672d16970b6739f177253f1499
+Is this address equals the address of User1? - True
+NFT-4 has info - name: NFT-demo-01; content: NFT-demo-01-content
+User1 change the name of NFT-4 to "NFT-demo-01-update"
+NFT-4 has info - name: NFT-demo-01-update; content: NFT-demo-01-content
+User2 has the following NFTs:  (0, 1, 2, 3)
+User1 transfer NFT-4 to User2
+User1 has the following NFTs:  (5, 6, 7, 8, 9)
+User2 has the following NFTs:  (0, 1, 2, 3, 4)
+NFT-4 is owned by 0xc3b3131e171d8fbcb11a98a964d4da97c284178c
+Is this address equals the address of User2? - True
+[root@VM-4-12-centos FISCO-BCOS-python-sdk]# 
