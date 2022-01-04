@@ -255,17 +255,28 @@ def LguToken_totalSupply():
 ###     nftContent:     str, 模型文件的哈希值 (需要服务器提前计算，计算方法见: https://github.com/newbie-at-cuhksz/mtv-smart-contracts/blob/main/Server_Contract_Interaction_py/MD5_py/nftContent_gen.py)
 ### output:
 ###     bool
+###     int, the newly created NFT ID
 def LguToken_CreateNft(userPrivateKey, nftName, nftContent):
     try:
         client = BcosClientEth(userPrivateKey)
 
         args = [nftName, nftContent]
-        res = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "CreateNft", args)
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "CreateNft", args)
         client.finish()
 
-        return True
+        # parse the receipt for event (NewLguModel),
+        # and get the ID of newly created NFT
+        newNftId = -1
+        data_parser = DatatypeParser()
+        logresult = data_parser.parse_event_logs(receipt["logs"])
+        for log in logresult:
+            if 'eventname' in log:
+                if (log['eventname'] == "NewLguModel"):     # log['eventname'] should be a str
+                    newNftId = log['eventdata'][0]          # log['eventdata'] should be a tuple, (NFT_ID, NFT_NAME, NFT_CONTENT), e.g. (11, 'event-test', 'event-test_C')
+
+        return True, newNftId
     except:
-        return False
+        return False, -1
 
 
 ### func: get how many tokens cost for a user to create a NFT
@@ -539,8 +550,8 @@ def demo():
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
     print("User1 has the following NFTs: ", nftList)
 
-    LguToken_CreateNft(user1_privateKey, "NFT-demo", "NFT-demo-content")
-    print("User1 create a new NFT")
+    isSuccess, newNftId = LguToken_CreateNft(user1_privateKey, "NFT-demo", "NFT-demo-content")
+    print("User1 create a new NFT, whose ID is %d" % newNftId)
 
     isSuccess, balance = LguToken_balanceOf(user1_address)
     print("User1: have %d tokens" % balance)
