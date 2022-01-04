@@ -2,8 +2,8 @@
 
 1. 将`server_interface`中的：
 
-   * `deployed_4_server_interface`文件夹
-   * `deployed_4_server_interface.py`
+   * `deployed_XXX_server_interface`文件夹
+   * `deployed_XXX_server_interface.py`
 
    拷贝到服务器`FISCO-BCOS-python-sdk`根目录下
 
