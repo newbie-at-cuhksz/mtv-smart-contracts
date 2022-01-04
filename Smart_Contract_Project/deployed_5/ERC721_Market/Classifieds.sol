@@ -7,8 +7,14 @@ pragma solidity>=0.4.24 <0.6.11;
  */
 
 import "./Ownable.sol";
-import "./IERC20.sol";
-import "./IERC721.sol";
+
+contract IERC20 {
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
+}
+
+contract IERC721 {
+    function transferFrom(address from, address to, uint256 tokenId) external;
+}
 
 
  /**
@@ -19,7 +25,7 @@ import "./IERC721.sol";
  * implemented. The item tokenization is responsibility of the ERC721 contract
  * which should encode any item details.
  */
-contract Classifieds {
+contract Classifieds is Ownable {
     event TradeStatusChange(uint256 ad, bytes32 status);
 
     IERC20 currencyToken;
@@ -36,14 +42,24 @@ contract Classifieds {
 
     uint256 tradeCounter;
 
-    constructor (address _currencyTokenAddress, address _itemTokenAddress)
+    //constructor (address _currencyTokenAddress, address _itemTokenAddress)
+    constructor ()
         public
-        virtual
     {
-        currencyToken = IERC20(_currencyTokenAddress);
-        itemToken = IERC721(_itemTokenAddress);
+        // set address of ERC20 and ERC721 contracts later
+        //currencyToken = IERC20(_currencyTokenAddress);
+        //itemToken = IERC721(_itemTokenAddress);
         tradeCounter = 0;
     }
+
+    function setERC20Addr (address _currencyTokenAddress) external onlyOwner {
+        currencyToken = IERC20(_currencyTokenAddress);
+    }
+
+    function setERC721Addr (address _itemTokenAddress) external onlyOwner {
+        itemToken = IERC721(_itemTokenAddress);
+    }
+
 
     /**
      * @dev Returns the details for a trade.
@@ -51,7 +67,6 @@ contract Classifieds {
      */
     function getTrade(uint256 _trade)
         public
-        virtual
         view
         returns(address, uint256, uint256, bytes32)
     {
@@ -66,7 +81,6 @@ contract Classifieds {
      */
     function openTrade(uint256 _item, uint256 _price)
         public
-        virtual
     {
         itemToken.transferFrom(msg.sender, address(this), _item);
         trades[tradeCounter] = Trade({
@@ -87,7 +101,6 @@ contract Classifieds {
      */
     function executeTrade(uint256 _trade)
         public
-        virtual
     {
         Trade memory trade = trades[_trade];
         require(trade.status == "Open", "Trade is not Open.");
@@ -103,7 +116,6 @@ contract Classifieds {
      */
     function cancelTrade(uint256 _trade)
         public
-        virtual
     {
         Trade memory trade = trades[_trade];
         require(
