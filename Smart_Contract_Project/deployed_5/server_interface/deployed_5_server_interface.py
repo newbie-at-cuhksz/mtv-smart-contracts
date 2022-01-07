@@ -394,16 +394,20 @@ def LguMetaverseEditor_getModelInfo(modelId):
 ### output:
 ###     bool,                       与`LguMetaverseEditor_getModelInfo`不同，如果`modelId`非法/太大，此函数仍return true
 ###     str, address of the owner   (如果`modelId`非法/太大，此处值为"0x0000000000000000000000000000000000000000")
-def LguMetaverseEditor_LguModelToOwner(modelId):
+def LguMetaverseEditor_ownerOf(modelId):
     try:
         client = BcosClientEth(dummy_privateKey)
 
         args = [modelId]
-        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "LguModelToOwner", args)
+        res = client.call(LguMetaverseEditor_address, LguMetaverseEditor_abi, "ownerOf", args)
         client.finish()
         return True, res[0]
     except:
         return False, ""
+
+### Another name of `LguMetaverseEditor_ownerOf`
+def LguMetaverseEditor_LguModelToOwner(modelId):
+    return LguMetaverseEditor_ownerOf(modelId)
 
 
 ### func: get a list of NFT IDs owned by user
@@ -607,7 +611,7 @@ abi_path_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
 data_parser1.load_abi_file(abi_path_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
-LguToken_address = "0xa8f8be6d9abff36436c14add0ab59ec9cfbbe129"                                     #全局变量，在接口中被使用 (合约地址)
+LguToken_address = "0x54829b37580e58a1066f2ca4317bab90d8b11fe4"                                     #全局变量，在接口中被使用 (合约地址)
 LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
 LguToken_regionList = [
     "NOWHERE",
@@ -642,7 +646,7 @@ abi_path_LguMetaverseEditor = "deployed_5_server_interface/LguMetaverseEditor.ab
 data_parser2 = DatatypeParser()
 data_parser2.load_abi_file(abi_path_LguMetaverseEditor)
 LguMetaverseEditor_abi = data_parser2.contract_abi                                                          #全局变量，在接口中被使用
-LguMetaverseEditor_address = "0x7aa186962b1377d859a0b074a1dd3010e0b8aaec"                                   #全局变量，在接口中被使用 (合约地址)
+LguMetaverseEditor_address = "0x03d6239f11da66880d182aa9acf60732e38f888b"                                   #全局变量，在接口中被使用 (合约地址)
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 
