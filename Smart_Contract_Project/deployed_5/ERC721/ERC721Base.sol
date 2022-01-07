@@ -1,16 +1,16 @@
-pragma solidity ^0.4.24;
+// SPDX-License-Identifier: MIT
+pragma solidity>=0.4.24 <0.6.11;
+
 
 import "./IERC721.sol";
-import "./IERC721Receiver.sol";
-import "../../math/SafeMath.sol";
-import "../../utils/Address.sol";
-import "../../introspection/ERC165.sol";
+import "./Safemath.sol";
+
 
 /**
  * @title ERC721 Non-Fungible Token Standard basic implementation
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
-contract ERC721 is ERC165, IERC721 {
+contract ERC721Base is Ownable, IERC721 {
 
   using SafeMath for uint256;
   using Address for address;

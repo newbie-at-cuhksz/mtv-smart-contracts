@@ -6,7 +6,7 @@ pragma solidity>=0.4.24 <0.6.11;
  * @title ERC721 Non-Fungible Token Standard basic interface
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
  */
-interface ERC721 {
+interface IERC721 {
 
   event Transfer(
     address indexed from,
@@ -36,14 +36,14 @@ interface ERC721 {
     external view returns (bool);
   
   function transferFrom(address from, address to, uint256 tokenId) external;
-  // function safeTransferFrom(address from, address to, uint256 tokenId)
-  //   external;
+  function safeTransferFrom(address from, address to, uint256 tokenId)
+    external;
 
-  // function safeTransferFrom(
-  //   address from,
-  //   address to,
-  //   uint256 tokenId,
-  //   bytes data
-  // )
-  //   external;
+  function safeTransferFrom(
+    address from,
+    address to,
+    uint256 tokenId,
+    bytes data
+  )
+    external;
 }

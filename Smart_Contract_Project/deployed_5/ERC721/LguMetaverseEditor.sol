@@ -3,12 +3,12 @@ pragma solidity>=0.4.24 <0.6.11;
 
 // ref: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol
 
-import "./Ownable.sol";
+//import "./Ownable.sol";
 import "./Safemath.sol";
-import "./IERC721.sol";
+//import "./IERC721.sol";
 
 
-contract LguMetaverseEditor is Ownable, ERC721 {
+contract LguMetaverseEditor is ERC721Base {
     
     using SafeMath for uint256;
 
