@@ -3,6 +3,7 @@ pragma solidity>=0.4.24 <0.6.11;
 
 
 import "./IERC721.sol";
+import "./Ownable.sol";
 import "./Safemath.sol";
 
 
@@ -13,7 +14,7 @@ import "./Safemath.sol";
 contract ERC721Base is Ownable, IERC721 {
 
   using SafeMath for uint256;
-  using Address for address;
+  //using Address for address;    //do not use it (garyc)
 
   // Equals to `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
   // which can be also obtained as `IERC721Receiver(0).onERC721Received.selector`
@@ -45,12 +46,14 @@ contract ERC721Base is Ownable, IERC721 {
    *   bytes4(keccak256('safeTransferFrom(address,address,uint256,bytes)'))
    */
 
-  constructor()
-    public
-  {
-    // register the supported interfaces to conform to ERC721 via ERC165
-    _registerInterface(_InterfaceId_ERC721);
-  }
+
+  // NO `constructor` used (garyc)
+  // constructor()
+  //   public
+  // {
+  //   // register the supported interfaces to conform to ERC721 via ERC165
+  //   _registerInterface(_InterfaceId_ERC721);
+  // }
 
   /**
    * @dev Gets the balance of the specified address
@@ -315,11 +318,13 @@ contract ERC721Base is Ownable, IERC721 {
     internal
     returns (bool)
   {
-    if (!to.isContract()) {
-      return true;
-    }
-    bytes4 retval = IERC721Receiver(to).onERC721Received(
-      msg.sender, from, tokenId, _data);
-    return (retval == _ERC721_RECEIVED);
+    // if (!to.isContract()) {
+    //   return true;
+    // }
+    // bytes4 retval = IERC721Receiver(to).onERC721Received(
+    //   msg.sender, from, tokenId, _data);
+    // return (retval == _ERC721_RECEIVED);
+
+    return true;    // (garyc)
   }
 }
