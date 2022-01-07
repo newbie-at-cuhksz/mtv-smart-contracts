@@ -5,7 +5,7 @@ pragma solidity>=0.4.24 <0.6.11;
 
 
 import "./Safemath.sol";
-import "./ERC721Base";
+import "./ERC721Base.sol";
 
 
 contract LguMetaverseEditor is ERC721Base {

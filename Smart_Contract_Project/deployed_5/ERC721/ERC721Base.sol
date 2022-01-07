@@ -175,10 +175,15 @@ contract ERC721Base is Ownable, IERC721 {
     address to,
     uint256 tokenId
   )
-    public
+    external
   {
+    // // solium-disable-next-line arg-overflow
+    // safeTransferFrom(from, to, tokenId, "");
+
+    // by garyc
+    transferFrom(from, to, tokenId);
     // solium-disable-next-line arg-overflow
-    safeTransferFrom(from, to, tokenId, "");
+    require(_checkAndCallSafeTransfer(from, to, tokenId, ""));
   }
 
   /**
@@ -199,7 +204,7 @@ contract ERC721Base is Ownable, IERC721 {
     uint256 tokenId,
     bytes _data
   )
-    public
+    external
   {
     transferFrom(from, to, tokenId);
     // solium-disable-next-line arg-overflow
@@ -325,6 +330,7 @@ contract ERC721Base is Ownable, IERC721 {
     //   msg.sender, from, tokenId, _data);
     // return (retval == _ERC721_RECEIVED);
 
-    return true;    // (garyc)
+    // there will be warning here (by garyc)
+    return true;
   }
 }
