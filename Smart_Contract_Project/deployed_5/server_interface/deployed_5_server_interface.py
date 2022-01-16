@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+from eth_account import Account     # this from the ETH official lib, "web3" (not from this Python-sdk)
 from client.contractnote import ContractNote
 #from client.bcosclient import BcosClient
 from client.bcosclienteth import BcosClientEth
@@ -38,12 +39,15 @@ import traceback
 #
 #      （更详细的说明见对应API上方的注释）
 #
+#   5. 不是所有的API都需要/应该被数据服务器直接使用，这些API上方的注释里会被标注 --- "不被数据服务器直接调用"
+#
 ######################################################################################
 
 
 ################################################################
 ###############     Interface: LguToken.sol     ################
 
+### （不被数据服务器直接调用）
 ### func: directly grant user(`account`) `amount` of tokens
 ### (This function is not encouraged to be used, since it is not blockchain-style implementation)
 ### input:
@@ -65,6 +69,7 @@ def LguToken_grantTokenDirectly1(account, amount):
         return False
 
 
+### （不被数据服务器直接调用）
 ### func: directly grant user(`account`) this number (timeSpan*valuePerTimeUnit) of tokens
 ### (This function is not encouraged to be used, since it is not blockchain-style implementation)
 ### input:
@@ -151,6 +156,26 @@ def LguToken_transfer(userPrivateKey, to, value):
     except:
         return False
 
+
+### （不被数据服务器直接调用）
+### func: approve `value` amount of tokens to `spender`
+### input:
+###     userPrivateKey:     str, the private key of the user, who wants to give out token
+###     spender:            str, address of user/contract get approved
+###     value:              int, the amount of tokens
+### output:
+###     bool
+def LguToken_approve(userPrivateKey, spender, value):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [to_checksum_address(spender), value]
+        receipt = client.sendRawTransactionGetReceipt(LguToken_address, LguToken_abi, "approve", args)
+        client.finish()
+
+        return True
+    except:
+        return False
 
 ### func: get number of tokens a user holds (`owner`)
 ### input: 
@@ -316,6 +341,9 @@ def LguToken_SetCreateNftFee(newFee):
 ##################################################################
 ###########     Interface: LguMetaverseEditor.sol     ############
 
+# 这个合约专门用于"体素编辑器"，即："体素编辑器"发布的模型为储存于本合约的NFT
+# 目前，"宠物编辑器"发布的涂色不为NFT
+
 # 关于NFT：每个NFT都有一个unique ID, 这个ID维护在区块链上。
 #         每当有新的NFT被创造，新的 NFT ID 为当前最大(ID+1)。
 #         即：NFT ID 由 0, 1, 2, 3... 顺序增长
@@ -428,6 +456,7 @@ def LguMetaverseEditor_getModelsByOwner(owner):
         return False, tuple()
 
 
+### （不被数据服务器直接调用）
 ### func: transfer a NFT with ID `_tokenId` from `_from` to `_to`
 ### input:
 ###     userPrivateKey: str, user private key
@@ -449,7 +478,192 @@ def LguMetaverseEditor_transferFrom(userPrivateKey, _from, _to, _tokenId):
     except:
         return False
 
+
+### （不被数据服务器直接调用）
+### func: approve an NFT to `spender`
+### input:
+###     userPrivateKey: str, user private key
+###     _to:            str, address
+###     _tokenId:       int
+### output:
+###     bool
+def LguMetaverseEditor_approve(userPrivateKey, _to, _tokenId):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [to_checksum_address(_to), _tokenId]
+        res = client.sendRawTransactionGetReceipt(LguMetaverseEditor_address, LguMetaverseEditor_abi, "approve", args)
+        client.finish()
+        return True
+    except:
+        return False
+
 ##########################################################
+
+
+
+##############################################################
+###########     Interface: LguModelMarket.sol     ############
+
+# 此合约用于实现：使用 LguToken 交易 LguMetaverseEditor(NFT) 的功能。
+#
+# MOTIVATION - 设计这个合约的原因：
+#   自然，即使没有这个合约，用token交易NFT的功能也是可以实现的。
+#   当两名用户商议好价格后，数据服务器执行：
+#       LguToken_transfer(buyer_private_key, seller_addr, price)
+#       LguMetaverseEditor_transferFrom(seller_private_key, seller_addr, buyer_addr, NftId)
+#   即：我们的数据服务器充当一个中心化的中间商，帮用户完成一手交钱一手交货的手续
+#
+#   但是，既然token和NFT都是链上资产，这个交易手续就不适合由一个中心化的中间商来执行。
+#   所以，我增加了这个合约，把上述的交易手续转移到链上进行。
+#
+# 合约功能 & 使用：
+#   这个合约的设计初衷是想要实现一个去中心化的"淘宝网"，玩家可以上架、下架、交易NFT。
+#   但是，上架、下架这些功能实际上我们在数据服务器上都已经实现过了。
+#   所以，对于数据服务器来说，我们只借用本合约进行NFT交易，其余的上架/下架功能仍使用之前的“中心化”实现方式。
+#   也就是说，尽管下方有许多新增的API，只有一个API（交易NFT）是会被数据服务器直接使用的。
+
+
+### func: trade a NFT between two users
+### *note: 严格来说，这不是一个合约接口，这个函数中调用了一系列合约API，从而实现交易NFT的功能。
+###        也因此，与其他API不同，我在这个函数中做了“鲁棒性”测试
+### input:
+###     sellerPrivateKey:   str
+###     buyerPrivateKey:    str
+###     nftId:              int
+###     price:              int
+### output:
+###     bool
+def LguModelMarket_trade(sellerPrivateKey, buyerPrivateKey, nftId, price):
+    # init
+    sellerAddr = Account.from_key(sellerPrivateKey).address
+    buyerAddr  = Account.from_key(buyerPrivateKey).address
+
+    # robustness test: seller is this owner of `nftId`?
+    isSuccess, nftOwner = LguMetaverseEditor_ownerOf(nftId)
+    if (not isSuccess) or (nftOwner.lower() != sellerAddr.lower()):
+        return False
+    
+    # robustness test: buyer has enough tokens?
+    isSuccess, tokenAmount = LguToken_balanceOf(buyerAddr)
+    if (not isSuccess) or (tokenAmount < price):
+        return False
+    
+    # seller approve NFT
+    isSuccess = LguMetaverseEditor_approve(sellerPrivateKey, LguModelMarket_address, nftId)
+    if (not isSuccess):
+        return False
+
+    # seller open trade
+    isSuccess, tradeId = LguModelMarket_openTrade(sellerPrivateKey, nftId, price)
+    if (not isSuccess):
+        return False
+    
+    # buyer approve tokens
+    isSuccess = LguToken_approve(buyerPrivateKey, LguModelMarket_address, price)
+    if (not isSuccess):
+        return False
+
+    # buyer execute trade
+    isSuccess = LguModelMarket_executeTrade(buyerPrivateKey, tradeId)
+    if (not isSuccess):
+        return False
+
+    return True
+
+
+### （不被数据服务器直接调用）
+### func: get trade info
+### input:
+###     _trade: int, trade id
+### output:
+###     bool
+###     str, trade poster
+###     int, trade NFT id
+###     int, trade ERC20 price
+###     ~~str, trade status~~
+def LguModelMarket_getTrade(_trade):
+    try:
+        client = BcosClientEth(dummy_privateKey)
+
+        args = [_trade]
+        res = client.call(LguModelMarket_address, LguModelMarket_abi, "getTrade", args)
+        client.finish()
+        return True, res[0], res[1], res[2]
+    except:
+        return False, "", 0, 0
+
+
+### （不被数据服务器直接调用）
+### func: open a trade
+### input:
+###     userPrivateKey: str
+###     _item:          int, NFT id to be selled
+###     _price:         int
+### output;
+###     bool
+###     int, trade id
+def LguModelMarket_openTrade(userPrivateKey, _item, _price):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [_item, _price]
+        receipt = client.sendRawTransactionGetReceipt(LguModelMarket_address, LguModelMarket_abi, "openTrade", args)
+        client.finish()
+
+        # parse the receipt for trade id
+        tradeId = -1
+        data_parser = DatatypeParser()
+        logresult = data_parser.parse_event_logs(receipt["logs"])
+        for log in logresult:
+            if 'eventname' in log:
+                if (log['eventname'] == "TradeStatusChange"):     # log['eventname'] should be a str
+                    tradeId = log['eventdata'][0]
+
+        return True, tradeId
+    except:
+        return False, -1
+
+
+### （不被数据服务器直接调用）
+### func: execute a trade
+### input:
+###     userPrivateKey: str, buyer private key
+###     _trade:         int, trade id
+### output:
+###     bool
+def LguModelMarket_executeTrade(userPrivateKey, _trade):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [_trade]
+        res = client.sendRawTransactionGetReceipt(LguModelMarket_address, LguModelMarket_abi, "executeTrade", args)
+        client.finish()
+        return True
+    except:
+        return False
+
+
+### （不被数据服务器直接调用）
+### func: cancel a trade
+### input:
+###     userPrivateKey: str, original seller private key
+###     _trade:         int, trade id to be cancelled
+### output:
+###     bool
+def LguModelMarket_cancelTrade(userPrivateKey, _trade):
+    try:
+        client = BcosClientEth(userPrivateKey)
+
+        args = [_trade]
+        res = client.sendRawTransactionGetReceipt(LguModelMarket_address, LguModelMarket_abi, "cancelTrade", args)
+        client.finish()
+        return True
+    except:
+        return False
+
+##############################################################
+
 
 
 ##########################################################
@@ -515,8 +729,8 @@ def demo():
     isSuccess, balance = LguToken_balanceOf(user2_address)
     print("User2: have %d tokens" % balance)
 
-    LguToken_transfer(user1_privateKey, user2_address, 5)
-    print("User1 transfer 5 tokens to User2")
+    LguToken_transfer(user1_privateKey, user2_address, 50)
+    print("User1 transfer 50 tokens to User2")
 
     isSuccess, balance = LguToken_balanceOf(user1_address)
     print("User1: have %d tokens" % balance)
@@ -587,8 +801,23 @@ def demo():
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user2_address)
     print("User2 has the following NFTs: ", nftList)
 
-    LguMetaverseEditor_transferFrom(user1_privateKey, user1_address, user2_address, modelId)
-    print("User1 transfer NFT-%d to User2" % modelId)
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    isSuccess, balance = LguToken_balanceOf(user2_address)
+    print("User2: have %d tokens" % balance)
+
+    # LguMetaverseEditor_transferFrom(user1_privateKey, user1_address, user2_address, modelId)
+    # print("User1 transfer NFT-%d to User2" % modelId)
+
+    LguModelMarket_trade(user1_privateKey, user2_privateKey, modelId, 15)
+    print("User1 sell NFT-%d to User2 at price 15" % modelId)
+
+    isSuccess, balance = LguToken_balanceOf(user1_address)
+    print("User1: have %d tokens" % balance)
+
+    isSuccess, balance = LguToken_balanceOf(user2_address)
+    print("User2: have %d tokens" % balance)
 
     isSuccess, nftList = LguMetaverseEditor_getModelsByOwner(user1_address)
     print("User1 has the following NFTs: ", nftList)
@@ -603,7 +832,7 @@ def demo():
 
 # 运行入口
 
-# 声明全局变量
+# API配置初始化 / 声明全局变量
 dummy_privateKey = "0x3c8ebf53a8b84f06a09f0207a314f5aed3d5a123c1539d3485f0afd7b36c77f6"  #全局变量，从区块链上读数据实际不需要私钥签名，但由于sdk限制，在此设定一个无用的私钥用于初始化client("address":"0xab5159fa9222e4787e53fb67394bf65c23d88ac9")
 
 # 加载合约ABI - LguToken
@@ -649,6 +878,13 @@ LguMetaverseEditor_abi = data_parser2.contract_abi                              
 LguMetaverseEditor_address = "0x03d6239f11da66880d182aa9acf60732e38f888b"                                   #全局变量，在接口中被使用 (合约地址)
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
+# 加载合约ABI - LguModelMarket
+abi_path_LguModelMarket = "deployed_5_server_interface/LguModelMarket.abi"
+data_parser3 = DatatypeParser()
+data_parser3.load_abi_file(abi_path_LguModelMarket)
+LguModelMarket_abi = data_parser3.contract_abi                                                              #全局变量，在接口中被使用
+LguModelMarket_address = "0x79c4fa1a71d68d18923a4fbb4516ce2f82bfae24"                                       #全局变量，在接口中被使用 (合约地址)
+LguModelMarket_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"       #全局变量，在接口中被使用
 
 demo()
 ################################################
