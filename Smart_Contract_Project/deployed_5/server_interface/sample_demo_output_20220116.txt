@@ -1,0 +1,53 @@
+[root@VM-4-12-centos FISCO-BCOS-python-sdk]# python3.7 deployed_5_server_interface.py
+=========== Test LguToken API ===========
+reset Region Weight
+==== total supply of tokens: 0 ====
+User1: have 0 tokens
+grantTokenDirectly1: grant user1 10 tokens
+User1: have 10 tokens
+grantTokenDirectly1: grant user1 (2*4) tokens
+User1: have 18 tokens
+Currently, user can get 28 of token in University Library per minute
+Currently, weight of Shaw International Conference Centre is 1000
+grantTokenOnHookOnBlockchain: grant user1 stay in University Library for 30min
+Currently, user can get 27 of token in University Library per minute
+Currently, weight of Shaw International Conference Centre is 1030
+User1: have 858 tokens
+spendTokenDirectly: User1 spend 25 tokens directly
+User1: have 833 tokens
+User2: have 0 tokens
+User1 transfer 50 tokens to User2
+User1: have 783 tokens
+User2: have 50 tokens
+==== total supply of tokens: 833 ====
+reset Region Weight
+Currently, weight of Shaw International Conference Centre is 1000
+User need to spend 10 of token to create a NFT
+Let's increase the NFT creation fee by 2
+User need to spend 12 of token to create a NFT
+=========== Test LguMetaverseEditor API ===========
+User1: have 783 tokens
+User1 has 0 NFTs
+User1 has the following NFTs:  ()
+User1 create a new NFT, whose ID is 0
+User1: have 771 tokens
+User1 has 1 NFTs
+User1 has the following NFTs:  (0,)
+We know that NFT with ID 0 is owned by User1
+We now let User1 do some operation to this NFT
+NFT-0 is owned by 0xe2fd835d8d064b672d16970b6739f177253f1499
+Is this address equals the address of User1? - True
+NFT-0 has info - name: NFT-demo; content: NFT-demo-content
+User1 change the name of NFT-0 to "NFT-demo-update"
+NFT-0 has info - name: NFT-demo-update; content: NFT-demo-content
+User2 has the following NFTs:  ()
+User1: have 771 tokens
+User2: have 50 tokens
+User1 sell NFT-0 to User2 at price 15
+User1: have 786 tokens
+User2: have 35 tokens
+User1 has the following NFTs:  ()
+User2 has the following NFTs:  (0,)
+NFT-0 is owned by 0xc3b3131e171d8fbcb11a98a964d4da97c284178c
+Is this address equals the address of User2? - True
+[root@VM-4-12-centos FISCO-BCOS-python-sdk]# 

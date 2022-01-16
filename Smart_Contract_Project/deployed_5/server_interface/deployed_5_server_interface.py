@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from eth_account import Account     # this from the ETH official lib, "web3" (not from this Python-sdk)
+from eth_account.account import Account
 from client.contractnote import ContractNote
 #from client.bcosclient import BcosClient
 from client.bcosclienteth import BcosClientEth
@@ -840,7 +840,7 @@ abi_path_LguToken = "deployed_5_server_interface/LguToken.abi"
 data_parser1 = DatatypeParser()
 data_parser1.load_abi_file(abi_path_LguToken)
 LguToken_abi = data_parser1.contract_abi                                                            #全局变量，在接口中被使用
-LguToken_address = "0x54829b37580e58a1066f2ca4317bab90d8b11fe4"                                     #全局变量，在接口中被使用 (合约地址)
+LguToken_address = "0xe806418d6ef61fcc899a5054c05af39652dcf9de"                                     #全局变量，在接口中被使用 (合约地址)
 LguToken_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"     #全局变量，在接口中被使用
 LguToken_regionList = [
     "NOWHERE",
@@ -875,7 +875,7 @@ abi_path_LguMetaverseEditor = "deployed_5_server_interface/LguMetaverseEditor.ab
 data_parser2 = DatatypeParser()
 data_parser2.load_abi_file(abi_path_LguMetaverseEditor)
 LguMetaverseEditor_abi = data_parser2.contract_abi                                                          #全局变量，在接口中被使用
-LguMetaverseEditor_address = "0x03d6239f11da66880d182aa9acf60732e38f888b"                                   #全局变量，在接口中被使用 (合约地址)
+LguMetaverseEditor_address = "0x6cc8180c529583fb80ab42b207d29d0a5450c0b6"                                   #全局变量，在接口中被使用 (合约地址)
 LguMetaverseEditor_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"   #全局变量，在接口中被使用
 
 # 加载合约ABI - LguModelMarket
@@ -883,7 +883,7 @@ abi_path_LguModelMarket = "deployed_5_server_interface/LguModelMarket.abi"
 data_parser3 = DatatypeParser()
 data_parser3.load_abi_file(abi_path_LguModelMarket)
 LguModelMarket_abi = data_parser3.contract_abi                                                              #全局变量，在接口中被使用
-LguModelMarket_address = "0x79c4fa1a71d68d18923a4fbb4516ce2f82bfae24"                                       #全局变量，在接口中被使用 (合约地址)
+LguModelMarket_address = "0xd3fbd069290118507d448d3550c07108fd390219"                                       #全局变量，在接口中被使用 (合约地址)
 LguModelMarket_ownerPrivateKey = "0xf7657dd26b5c63987c6fa586405023c694ae490c86feb44d68415df579b4219a"       #全局变量，在接口中被使用
 
 demo()
