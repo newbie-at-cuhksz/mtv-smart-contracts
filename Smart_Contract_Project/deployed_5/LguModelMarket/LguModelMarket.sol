@@ -6,6 +6,6 @@ import "./Ownable.sol";
 import "./Classifieds.sol";
 
 
-contract ERC721Market is Classifieds {
+contract LguModelMarket is Classifieds {
 
 }
