@@ -34,7 +34,7 @@ contract LguToken is TokenValueMapping {
     
     // interaction with LguMetaverseEditor
     LguMetaverseEditorInterface lguMetaverseEditorInterface;
-    uint256 private _createNftFee = 10;
+    uint256 private _createNftFee = 1000;
 
     function GetCreateNftFee() view external returns (uint256) {
         return _createNftFee;
