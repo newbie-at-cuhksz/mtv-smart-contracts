@@ -1,13 +1,25 @@
-# smart-contracts
+# CUHKSZ Metaverse Smart Contracts
 
 开发环境及使用的工具/插件
 
+## 0. FISCO-BCOS区块链部署
+
+服务器环境：**CentOS 7.6**
+
+官方文档：
+
+* [快速搭链](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/installation.html)
+* [WeBASE中间件部署](https://webasedoc.readthedocs.io/zh_CN/latest/docs/WeBASE/install.html)
+
+
+
 ## 1. Smart Contracts
 
-包含两部分：
+包含以下部分：
 
-* ERC20 - 游戏内代币
-* ERC721 - 编辑器NFT
+* `LguToken`: **ERC20**, 游戏内代币
+* `LguMetaverseEditor`: **ERC721**, （体素）编辑器NFT
+* `LguModelMarket`: 实现使用`LguToken`交易`LguMetaverseEditor` (NFT) 的功能
 
 开发环境：
 
@@ -24,10 +36,6 @@
 * Compiler
 
     ```
-    //SPDX-License-Identifier: MIT
-    pragma solidity >=0.7.0 <0.9.0;
-    // 实际编译使用v0.8.4
-    
     // FISCO链
     // SPDX-License-Identifier: MIT
     pragma solidity>=0.4.24 <0.6.11;
@@ -42,7 +50,7 @@
 
 客户端 ==> **服务器 ==> 合约**
 
-需实现服务器与合约交互的接口
+服务器与合约交互的接口使用以下文档/工具实现：
 
 * [官方文档](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/python_sdk/index.html)
 * 服务器环境配置见[Server_Contract_Interaction_py/README.md](Server_Contract_Interaction_py/README.md)
